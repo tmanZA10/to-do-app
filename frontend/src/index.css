@@ -19,18 +19,7 @@ body {
   justify-content: center;
 }
 
-p{
-  text-align: center;
-}
 
-img{
-  height: 50px;
-}
-
-.imgs{
-  display: flex;
-  gap: 10px;
-}
 
 
 

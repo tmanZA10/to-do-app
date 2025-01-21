@@ -1,37 +1,26 @@
-import { useState } from "react";
-import mongo from './assets/MongoDB-Logo-5.svg'
-import r from './assets/react.svg'
-import ts from './assets/Typescript_logo.png'
-import sb from './assets/SpringBoot.jpg'
+import { Route, Routes } from "react-router-dom"
+import LogIn from "./pages/LogIn"
+import NotFound from "./pages/NotFound"
+import Layout from "./pages/Layout"
+import Home from "./pages/Home"
+import ViewTasks from "./pages/ViewTasks"
+import AddTask from "./pages/AddTask"
+import EditTasks from "./pages/EditTasks"
+
 
 
 function App() {
-
-  const [message, setMessage] = useState("")
-  
-  fetch("http://localhost:8080")
-  .then( r => r.text()
-  )
-  .then(
-    d => setMessage(d)
-  )
-
-  console.log("haha");
-  
-  
-
   return (
-    <div>
-      <h1>FullStack ToDo App</h1>
-      <p>{message}</p>
-      <p>MongoDB for Database</p>
-      <div className="imgs">
-        <img src={r} alt="" />
-        <img src={ts} alt="" />
-        <img src={sb} alt="" />
-        <img src={mongo} alt="" />
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="tasks" element={<ViewTasks />} />
+        <Route path="addTask" element={<AddTask />} />
+        <Route path="editTasks" element={<EditTasks />} />
+      </Route>
+      <Route path="/login" element={<LogIn />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   )
 }
 
