@@ -1,25 +1,29 @@
-import { NavLink, Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom"
+import NavBar from "../components/navigation/NavBar"
+import SideBar from "../components/navigation/SideBar"
 
 
 function Layout() {
+
+	const routes = [
+		{
+			path: "/tasks",
+			name: "My Tasks"
+		},
+		{
+			path: "/addTask",
+			name: "Add Task"
+		},
+		{
+			path: "/editTasks",
+			name: "Edit Tasks"
+		}
+	]
+
   return (
     <>
-        <div>
-            <h1>ToDo App</h1>
-            <nav>
-                <ul>
-                    <li>
-                        <NavLink to="/tasks">My Tasks</NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/addTask">Add Task</NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/editTasks">Edit Tasks</NavLink>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+				<NavBar navList={routes} />
+				<SideBar navList={routes} />
         <Outlet />
     </>
   )
