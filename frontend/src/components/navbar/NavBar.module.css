@@ -1,0 +1,51 @@
+.navBar{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    height: var(--nav-bar-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.navBar ul{
+    display: flex;
+    list-style: none;
+    gap: 1.6rem;
+}
+
+.navBar ul li a{
+    font-size: 2rem;
+}
+
+.navBar ul li :hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.navBar ul li :hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.active{
+    text-decoration: underline;
+    /* background-color: blue; */
+    color: var(--accent-color);
+}
+
+.notActive{
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+
+@media only screen and (max-width:450px) {
+    .navBar ul {
+        display: none;
+    }
+}
