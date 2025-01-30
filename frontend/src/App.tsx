@@ -1,13 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import LogIn from "./pages/LogIn"
-import NotFound from "./pages/NotFound"
-import Layout from "./pages/Layout"
+import LogIn from "./pages/login/LogIn"
+import NotFound from "./pages/notfound/NotFound"
+import Layout from "./layouts/Layout"
 import Home from "./pages/Home"
 import ViewTasks from "./pages/ViewTasks"
 import AddTask from "./pages/AddTask"
 import EditTasks from "./pages/EditTasks"
-// import { signUpAction } from "./components/signupform/SignUpForm"
-// import SignUp from "./pages/SignUp"
+import SignUp from "./pages/signup/SignUp"
+import { SignUpFormAction } from "./components/signupform/SignUpForm"
 
 const router = createBrowserRouter(
   [
@@ -38,11 +38,11 @@ const router = createBrowserRouter(
       path: "/login",
       element: <LogIn />
     },
-    // {
-    //   path: "/signup",
-    //   element: <SignUp />,
-    //   action: signUpAction
-    // },
+    {
+      path: "/signup",
+      element: <SignUp />,
+      action: SignUpFormAction
+    },
   ]
 )
 

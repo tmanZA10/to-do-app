@@ -5,13 +5,11 @@
   font-size: 62.5%;
 
   /* Color palate */
-  --primary-color:rgb(240, 240, 230);
-  --secondary-color: rgb(0, 0, 30);
-  --accent-color:rgb(0, 125, 205);
+  --hue-color: rgb(15, 15, 185);
+  --black-color: rgb(15, 15, 15);
+  --white-color: rgb(230, 230, 230);
 
   /* color-scheme: light dark; */
-  color: var(--secondary-color);
-  background-color: var(--primary-color);
 
   --nav-bar-height: 7.5rem;
 }
@@ -20,12 +18,12 @@
 body {
   font-size: 1.6rem;
   margin: 0;
-  display: flex;
+  /* display: flex; */
   /* place-items: center; */
-  min-width: 320px;
+  /* min-width: 320px;
   min-height: 100vh;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
 }
 
 
