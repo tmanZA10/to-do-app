@@ -9,13 +9,13 @@ export async function SignUpFormAction({ request }:ActionFunctionArgs){
   const name = formData.get('name')!.toString()
   const email = formData.get("email")!.toString()
   const password = formData.get("password")!.toString()
-  const passwordMatch = formData.get("passMatch")!.toString()
+  const confrimPassword = formData.get("passMatch")!.toString()
 
   const data = {
     name,
     email,
     password,
-    passwordMatch
+    confrimPassword
   }
 
   console.log(data);
@@ -37,8 +37,26 @@ function SignUpForm() {
   const [buttonState, setButtonState] = useState(true)
 
   useEffect(()=>{
-    if (password === "" && passwordMatch === "") return
-    if (password.length < minPassLength || passwordMatch.length < minPassLength) return
+    
+    if (password === "" || passwordMatch === "") {
+      setButtonState(true)
+      return
+    }
+  
+    
+    if (password.length < minPassLength || passwordMatch.length < minPassLength) {
+      setButtonState(true)
+      return
+    }
+
+    if (password !== passwordMatch){
+      setPassErrorMatch("Password do not match.")
+      setButtonState(true)
+      return
+    }else{
+      setPassErrorMatch(null)
+    }
+
     setButtonState(false)
     
   }, [password, passwordMatch])
@@ -120,7 +138,7 @@ function SignUpForm() {
         { passError && 
         <div>
           {passError.map(
-            (m)=> <p className={styles.errorMessage}>{m}</p>
+            (m, i)=> <p className={styles.errorMessage} key={i}>{m}</p>
           )}
         </div> }
       </div>
