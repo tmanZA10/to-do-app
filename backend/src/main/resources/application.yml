@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: to-do-app-backend
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  profiles:
+    active: dev
