@@ -1,0 +1,20 @@
+
+services:
+  database:
+    image: postgres
+    container_name: todo_db
+    environment:
+      POSTGRES_DB: to-do-db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5000:5432"
+
+  pgadmin:
+    image: "dpage/pgadmin4:8.4"
+    container_name: pg_admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "8000:80"
