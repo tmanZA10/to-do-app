@@ -1,7 +1,7 @@
 
 services:
   database:
-    image: postgres
+    image: postgres:17.2
     container_name: todo_db
     environment:
       POSTGRES_DB: to-do-db
@@ -11,7 +11,7 @@ services:
       - "5000:5432"
 
   pgadmin:
-    image: "dpage/pgadmin4:8.4"
+    image: dpage/pgadmin4:8.4
     container_name: pg_admin
     environment:
       PGADMIN_DEFAULT_EMAIL: user@email.com

@@ -13,6 +13,7 @@ import tmanZA10.todo.to_do_app.service.AuthService;
 
 @RestController
 @RequestMapping("/api/v1/")
+@CrossOrigin
 class AuthController {
 
     private AuthService service;
