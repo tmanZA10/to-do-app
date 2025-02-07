@@ -19,7 +19,7 @@ public class UserSignUpDTO {
     @NotNull
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$")
     private String password;
-    @JsonSetter("ConfirmPassword")
+    @JsonSetter("confirmPassword")
     @NotNull()
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$")
     private String confirmPassword;
