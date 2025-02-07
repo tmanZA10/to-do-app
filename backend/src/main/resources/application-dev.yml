@@ -3,3 +3,9 @@ spring:
     url: "jdbc:postgresql://localhost:5000/to-do-db"
     username: user
     password: password
+
+security:
+  jwt:
+    issuer: to-do-app-development
+    exp-time: 900
+
