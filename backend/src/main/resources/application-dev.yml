@@ -9,3 +9,5 @@ security:
     issuer: to-do-app-development
     exp-time: 900
 
+  hash-strength: 17
+
