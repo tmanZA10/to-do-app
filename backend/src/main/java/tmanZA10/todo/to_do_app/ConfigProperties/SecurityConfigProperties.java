@@ -13,9 +13,18 @@ public class SecurityConfigProperties {
 
     @NestedConfigurationProperty
     private final Jwt jwt = new Jwt();
+    private int hashStrength = 10;
 
     public Jwt getJwt() {
         return jwt;
+    }
+
+    public int getHashStrength() {
+        return hashStrength;
+    }
+
+    public void setHashStrength(int hashStrength) {
+        this.hashStrength = hashStrength;
     }
 
     public static class Jwt{

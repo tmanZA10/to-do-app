@@ -47,7 +47,7 @@ public class JWTProvider {
                         )
                 )
                 .withExpiresAt(Instant.now().plusSeconds(15))
-                .withClaim("user_id", String.valueOf(user.getId()))
+                .withSubject(user.getId().toString())
                 .withClaim("name", user.getName())
                 .withClaim("email", user.getEmail())
                 .sign(algorithm);
