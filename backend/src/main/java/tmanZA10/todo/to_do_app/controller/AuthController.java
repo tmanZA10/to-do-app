@@ -12,7 +12,7 @@ import tmanZA10.todo.to_do_app.exceptions.UserNotFoundException;
 import tmanZA10.todo.to_do_app.service.AuthService;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/auth")
 @CrossOrigin
 class AuthController {
 
@@ -22,7 +22,7 @@ class AuthController {
         this.service = service;
     }
 
-    @PostMapping("signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@Valid @RequestBody UserSignUpDTO user){
         UserInfoDTO registered;
         try{
@@ -48,7 +48,7 @@ class AuthController {
 
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO){
         LoggedInUserDTO loggedInUser;
         try {

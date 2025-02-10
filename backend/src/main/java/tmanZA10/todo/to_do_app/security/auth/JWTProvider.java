@@ -46,7 +46,6 @@ public class JWTProvider {
                                 config.getJwt().getExpTime()
                         )
                 )
-                .withExpiresAt(Instant.now().plusSeconds(15))
                 .withSubject(user.getId().toString())
                 .withClaim("name", user.getName())
                 .withClaim("email", user.getEmail())
