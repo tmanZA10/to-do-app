@@ -1,32 +1,76 @@
-import { ActionFunctionArgs, Form } from 'react-router-dom'
+import {ActionFunctionArgs, Form, useActionData, useNavigate} from 'react-router-dom'
 import styles from './SignUpForm.module.css'
-import { ChangeEvent, useEffect, useState } from 'react'
+import {ChangeEvent, useEffect, useState} from 'react'
+import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
 
-export async function SignUpFormAction({ request }:ActionFunctionArgs){
+export type SignUpFormState = {
+  state: "success" | "error",
+  message: string,
+  id: number
+}
+
+export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<SignUpFormState>{
 
   const formData = await request.formData()
 
   const name = formData.get('name')!.toString()
   const email = formData.get("email")!.toString()
   const password = formData.get("password")!.toString()
-  const confrimPassword = formData.get("passMatch")!.toString()
+  const confirmPassword = formData.get("passMatch")!.toString()
+
+  const id = Math.round(Math.random() * 1000000000)
 
   const data = {
     name,
     email,
     password,
-    confrimPassword
+    confirmPassword
   }
 
   console.log(data);
+
+  const response = await fetch(
+      "http://localhost:8080/auth/signup",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      }
+  )
+
+  if (response.ok) {
+    return {
+      state: "success",
+      message: "Signed up successfully.",
+      id
+    }
+  }else {
+    let message: string;
+    if (response.status === 409) {
+      message = "Account already exists."
+    }
+    else {
+      message = "Something went wrong."
+    }
+
+    return {
+      state: "error",
+      message,
+      id
+    }
+  }
   
 	
 }
 
 function SignUpForm() {
 
-  const minPassLength = 8
-  const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$/
+  const MINPASSLENGTH = 8
+  const PASSREGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$/
+
+  const navigate = useNavigate()
 
   const [password, setPassword] = useState("")
   const [passwordMatch, setPasswordMatch] = useState("")
@@ -36,6 +80,13 @@ function SignUpForm() {
 
   const [buttonState, setButtonState] = useState(true)
 
+  const [loading, setLoading] = useState(false);
+
+  const [responseData, setResponseData] = useState<SignUpFormState | undefined>(undefined)
+
+
+  const res = useActionData<SignUpFormState>();
+
   useEffect(()=>{
     
     if (password === "" || passwordMatch === "") {
@@ -44,7 +95,7 @@ function SignUpForm() {
     }
   
     
-    if (password.length < minPassLength || passwordMatch.length < minPassLength) {
+    if (password.length < MINPASSLENGTH || passwordMatch.length < MINPASSLENGTH) {
       setButtonState(true)
       return
     }
@@ -65,7 +116,7 @@ function SignUpForm() {
     if (password !== ""){
       if (password.length < 8) {
         setPassError(["Password must have atleast 8 characters."])
-      }else if(!passRegex.test(password)){
+      }else if(!PASSREGEX.test(password)){
         setPassError([
           "Password must have contain:",
           "An uppercase letter.",
@@ -92,7 +143,33 @@ function SignUpForm() {
       setPassErrorMatch(null)
     }
   }, [passwordMatch])
-  
+
+  useEffect(() => {
+    if (res !== undefined){
+
+      if (res.state === "success"){
+        setLoading(false)
+        setTimeout(() => navigate("../login"), 1500)
+      }else {
+        if (responseData === undefined){
+          setResponseData(res)
+          setLoading(false)
+          return
+        }
+        if (res.id !== responseData.id){
+          setResponseData(res)
+          setLoading(false)
+          return
+        }
+      }
+
+    }
+  });
+
+  function buttonClick(){
+    setLoading(true)
+  }
+
   function handlePasswordChange({ target }: ChangeEvent<HTMLInputElement>){
     setPassword(target.value)
   }
@@ -103,6 +180,12 @@ function SignUpForm() {
 
   return (
     <Form method='post' action='../signup' className={styles.form}>
+      {res &&
+          <p className={
+            res.state === "success" ? styles.responseSuccess : styles.responseError
+          }>{res.message}</p>
+
+      }
       <div className={styles.inputContainer}>
         <label htmlFor="name">Name:</label>
         <input 
@@ -130,7 +213,7 @@ function SignUpForm() {
           type="password" 
           id='password'
           name='password'
-          minLength={minPassLength}
+          minLength={MINPASSLENGTH}
           value={password}
           onChange={handlePasswordChange}
 					required
@@ -149,7 +232,7 @@ function SignUpForm() {
           type="password" 
           id='passMatch'
           name='passMatch'
-          minLength={minPassLength}
+          minLength={MINPASSLENGTH}
           value={passwordMatch}
           onChange={handlePasswordMatchChange}
 					required
@@ -159,13 +242,16 @@ function SignUpForm() {
         </div>
       </div>
 
-				<button 
+      <button
           type='submit' 
           className={styles.submitButton}
           disabled={buttonState}
+          onClick={buttonClick}
         >
           Sign Up
-        </button>
+      </button>
+
+      <LoadingSpinner display={loading} />
   	</Form>
   )
 }
