@@ -2,6 +2,7 @@ import {ActionFunctionArgs, Form, useActionData, useNavigate} from 'react-router
 import styles from './SignUpForm.module.css'
 import {ChangeEvent, useEffect, useState} from 'react'
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
+import { passwordRegex, minPassLength } from "../../AppVariables.ts";
 
 export type SignUpFormState = {
   state: "success" | "error",
@@ -67,9 +68,6 @@ export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<S
 
 function SignUpForm() {
 
-  const MINPASSLENGTH = 8
-  const PASSREGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$/
-
   const navigate = useNavigate()
 
   const [password, setPassword] = useState("")
@@ -95,7 +93,7 @@ function SignUpForm() {
     }
   
     
-    if (password.length < MINPASSLENGTH || passwordMatch.length < MINPASSLENGTH) {
+    if (password.length < minPassLength || passwordMatch.length < minPassLength) {
       setButtonState(true)
       return
     }
@@ -114,9 +112,9 @@ function SignUpForm() {
 
   useEffect(() => {
     if (password !== ""){
-      if (password.length < 8) {
-        setPassError(["Password must have atleast 8 characters."])
-      }else if(!PASSREGEX.test(password)){
+      if (password.length < minPassLength) {
+        setPassError([`Password must have at least ${minPassLength} characters.`])
+      }else if(!passwordRegex.test(password)){
         setPassError([
           "Password must have contain:",
           "An uppercase letter.",
@@ -197,7 +195,7 @@ function SignUpForm() {
         />
       </div>
 
-			<div className={styles.inputContainer}>
+      <div className={styles.inputContainer}>
         <label htmlFor="email">Email:</label>
         <input 
           type="email" 
@@ -207,13 +205,13 @@ function SignUpForm() {
         />
       </div>
 
-			<div className={styles.inputContainer}>
+      <div className={styles.inputContainer}>
         <label htmlFor="password">Password:</label>
         <input 
           type="password" 
           id='password'
           name='password'
-          minLength={MINPASSLENGTH}
+          minLength={minPassLength}
           value={password}
           onChange={handlePasswordChange}
 					required
@@ -226,13 +224,13 @@ function SignUpForm() {
         </div> }
       </div>
       
-			<div className={styles.inputContainer}>
+      <div className={styles.inputContainer}>
         <label htmlFor="passMatch">Confirm Password:</label>
         <input 
           type="password" 
           id='passMatch'
           name='passMatch'
-          minLength={MINPASSLENGTH}
+          minLength={minPassLength}
           value={passwordMatch}
           onChange={handlePasswordMatchChange}
 					required
