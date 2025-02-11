@@ -2,7 +2,7 @@ import {ActionFunctionArgs, Form, useActionData, useNavigate} from 'react-router
 import styles from './SignUpForm.module.css'
 import {ChangeEvent, useEffect, useState} from 'react'
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
-import { passwordRegex, minPassLength } from "../../AppVariables.ts";
+import {passwordRegex, minPassLength, backendURL} from "../../AppVariables.ts";
 
 export type SignUpFormState = {
   state: "success" | "error",
@@ -31,7 +31,7 @@ export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<S
   console.log(data);
 
   const response = await fetch(
-      "http://localhost:8080/auth/signup",
+      `${backendURL}/auth/signup`,
       {
         method: "POST",
         headers: {
@@ -62,8 +62,6 @@ export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<S
       id
     }
   }
-  
-	
 }
 
 function SignUpForm() {
@@ -147,7 +145,7 @@ function SignUpForm() {
 
       if (res.state === "success"){
         setLoading(false)
-        setTimeout(() => navigate("../login"), 1500)
+        setTimeout(() => navigate("../login"), 800)
       }else {
         if (responseData === undefined){
           setResponseData(res)
@@ -219,7 +217,7 @@ function SignUpForm() {
         { passError && 
         <div>
           {passError.map(
-            (m, i)=> <p className={styles.errorMessage} key={i}>{m}</p>
+            (m, i)=> <p className={styles.inputErrorMessage} key={i}>{m}</p>
           )}
         </div> }
       </div>
@@ -236,7 +234,7 @@ function SignUpForm() {
 					required
         />
         <div>
-          <p className={styles.errorMessage}>{passErrorMatch}</p>
+          <p className={styles.inputErrorMessage}>{passErrorMatch}</p>
         </div>
       </div>
 

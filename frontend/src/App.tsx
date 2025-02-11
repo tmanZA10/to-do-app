@@ -8,6 +8,7 @@ import AddTask from "./pages/AddTask"
 import EditTasks from "./pages/EditTasks"
 import SignUp from "./pages/signup/SignUp"
 import { SignUpFormAction } from "./components/signupform/SignUpForm"
+import {LogInAction} from "./components/loginform/LoginForm.tsx";
 
 const router = createBrowserRouter(
   [
@@ -36,7 +37,8 @@ const router = createBrowserRouter(
     },
     {
       path: "/login",
-      element: <LogIn />
+      element: <LogIn />,
+      action: LogInAction
     },
     {
       path: "/signup",
