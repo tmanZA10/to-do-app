@@ -13,7 +13,6 @@ import tmanZA10.todo.to_do_app.service.AuthService;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
 class AuthController {
 
     private AuthService service;
@@ -23,6 +22,7 @@ class AuthController {
     }
 
     @PostMapping("/signup")
+    @CrossOrigin
     public ResponseEntity<?> signUpUser(@Valid @RequestBody UserSignUpDTO user){
         UserInfoDTO registered;
         try{
@@ -36,10 +36,10 @@ class AuthController {
                             )
                     );
         }catch (EmailTakenException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(
                             new BadRequestDTO(
-                                    HttpStatus.BAD_REQUEST,
+                                    HttpStatus.CONFLICT,
                                     "Email already taken"
                             )
                     );
@@ -49,6 +49,7 @@ class AuthController {
     }
 
     @PostMapping("/login")
+    @CrossOrigin
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO){
         LoggedInUserDTO loggedInUser;
         try {
@@ -56,7 +57,7 @@ class AuthController {
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }catch (BadPasswordException x){
-            return new ResponseEntity<>("Bad password", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Bad password", HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
