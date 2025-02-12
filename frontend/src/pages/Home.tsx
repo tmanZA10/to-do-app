@@ -1,7 +1,7 @@
 
 function Home() {
   return (
-    <div>Home</div>
+    <div>To do app in dev</div>
   )
 }
 

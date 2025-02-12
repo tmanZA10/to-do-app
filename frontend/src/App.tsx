@@ -1,14 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import LogIn from "./pages/login/LogIn"
-import NotFound from "./pages/notfound/NotFound"
 import Layout from "./layouts/Layout"
-import Home from "./pages/Home"
-import ViewTasks from "./pages/ViewTasks"
-import AddTask from "./pages/AddTask"
-import EditTasks from "./pages/EditTasks"
-import SignUp from "./pages/signup/SignUp"
 import { SignUpFormAction } from "./components/signupform/SignUpForm"
 import {LogInAction} from "./components/loginform/LoginForm.tsx";
+import NotFound from "./pages/notfound/NotFound.tsx";
+import Home from "./pages/Home.tsx";
+import LogIn from "./pages/login/LogIn.tsx";
+import SignUp from "./pages/signup/SignUp.tsx";
 
 const router = createBrowserRouter(
   [
@@ -22,28 +19,16 @@ const router = createBrowserRouter(
           element: <Home />
         },
         {
-          path: "tasks",
-          element: <ViewTasks />
+          path: "/login",
+          element: <LogIn />,
+          action: LogInAction
         },
         {
-          path: "addTask",
-          element: <AddTask />
-        },
-        {
-          path: "editTasks",
-          element: <EditTasks />
+          path: "/signup",
+          element: <SignUp />,
+          action: SignUpFormAction
         },
       ]
-    },
-    {
-      path: "/login",
-      element: <LogIn />,
-      action: LogInAction
-    },
-    {
-      path: "/signup",
-      element: <SignUp />,
-      action: SignUpFormAction
     },
   ]
 )

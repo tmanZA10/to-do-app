@@ -1,7 +1,7 @@
 import styles from './LoginForm.module.css'
 import {ActionFunctionArgs, Form, useActionData, useNavigate} from "react-router-dom";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
-import {passwordRegex, minPassLength, backendURL} from "../../AppVariables.ts";
+import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
 
 type LoginFormState = {
@@ -23,7 +23,7 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
         password,
     }
 
-    console.log(data)
+    // console.log(data)
 
     const response = await fetch(
         `${backendURL}/auth/login`,
@@ -108,7 +108,7 @@ function LoginForm() {
 
             if (res.state === "success"){
                 setLoading(false)
-                setTimeout(() => navigate("../"), 800)
+                setTimeout(() => navigate("../"), redirectionDelay)
             }else {
                 if (response.current === undefined){
                     response.current = res

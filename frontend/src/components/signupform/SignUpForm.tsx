@@ -2,7 +2,7 @@ import {ActionFunctionArgs, Form, useActionData, useNavigate} from 'react-router
 import styles from './SignUpForm.module.css'
 import {ChangeEvent, useEffect, useState} from 'react'
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
-import {passwordRegex, minPassLength, backendURL} from "../../AppVariables.ts";
+import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
 
 export type SignUpFormState = {
   state: "success" | "error",
@@ -145,7 +145,7 @@ function SignUpForm() {
 
       if (res.state === "success"){
         setLoading(false)
-        setTimeout(() => navigate("../login"), 800)
+        setTimeout(() => navigate("../login"), redirectionDelay)
       }else {
         if (responseData === undefined){
           setResponseData(res)
