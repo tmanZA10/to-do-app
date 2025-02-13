@@ -48,6 +48,7 @@ public class JWTProvider {
     }
 
 
+    @Deprecated
     public String generateToken(User user){
         return JWT.create()
                 .withIssuer(config.getJwt().getIssuer())

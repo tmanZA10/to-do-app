@@ -2,18 +2,20 @@ package tmanZA10.todo.to_do_app.service;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import tmanZA10.todo.to_do_app.dto.LoggedInUserDTO;
+import tmanZA10.todo.to_do_app.dto.LogInResponseDTO;
 import tmanZA10.todo.to_do_app.dto.UserInfoDTO;
-import tmanZA10.todo.to_do_app.dto.UserLoginDTO;
+import tmanZA10.todo.to_do_app.dto.LogInRequestDTO;
 import tmanZA10.todo.to_do_app.exceptions.BadPasswordException;
 import tmanZA10.todo.to_do_app.exceptions.UserNotFoundException;
 import tmanZA10.todo.to_do_app.model.User;
 import tmanZA10.todo.to_do_app.exceptions.EmailTakenException;
 import tmanZA10.todo.to_do_app.exceptions.PasswordMissMatchException;
-import tmanZA10.todo.to_do_app.dto.UserSignUpDTO;
+import tmanZA10.todo.to_do_app.dto.SignUpRequestDTO;
 import tmanZA10.todo.to_do_app.repository.AuthRepository;
 import tmanZA10.todo.to_do_app.security.PasswordHash;
 import tmanZA10.todo.to_do_app.security.auth.JWTProvider;
+
+import java.time.Instant;
 
 @Service
 public class AuthService {
@@ -28,7 +30,7 @@ public class AuthService {
         this.jwtProvider = jwtProvider;
     }
 
-    public UserInfoDTO signUpNewUser(UserSignUpDTO user) throws
+    public UserInfoDTO signUpNewUser(SignUpRequestDTO user) throws
                                                     PasswordMissMatchException,
                                                     EmailTakenException {
         if (!user.passwordEquality()) throw new PasswordMissMatchException();
@@ -42,13 +44,17 @@ public class AuthService {
         return new UserInfoDTO(registeredUser.getId(), registeredUser.getName(), registeredUser.getEmail());
     }
 
-    public LoggedInUserDTO  signInUser(UserLoginDTO userLoginDTO) throws
+    public LogInResponseDTO signInUser(LogInRequestDTO logInRequestDTO) throws
                                                             UserNotFoundException,
                                                             BadPasswordException {
-        User user = repository.findByEmail(userLoginDTO.getEmail());
+        User user = repository.findByEmail(logInRequestDTO.getEmail());
         if (user == null) throw new UserNotFoundException();
-        if (!passwordHash.verify(userLoginDTO.getPassword(), user.getPassword())) throw new BadPasswordException();
-
-        return new LoggedInUserDTO(user.getId(), jwtProvider.generateToken(user));
+        if (!passwordHash.verify(logInRequestDTO.getPassword(), user.getPassword())) throw new BadPasswordException();
+        Instant now = Instant.now();
+        return new LogInResponseDTO(
+                user.getId(),
+                jwtProvider.generateAccessToken(user, now),
+                jwtProvider.generateRefreshToken(user, now)
+        );
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class UserLoginDTO {
+public class LogInRequestDTO {
 
     @NotNull
     @Email
@@ -13,10 +13,10 @@ public class UserLoginDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$")
     private String password;
 
-    public UserLoginDTO() {
+    public LogInRequestDTO() {
     }
 
-    public UserLoginDTO(String email, String password) {
+    public LogInRequestDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }

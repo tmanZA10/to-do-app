@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class UserSignUpDTO {
+public class SignUpRequestDTO {
 
     @NotNull
     @NotBlank
@@ -24,7 +24,7 @@ public class UserSignUpDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,}$")
     private String confirmPassword;
 
-    protected UserSignUpDTO() {
+    protected SignUpRequestDTO() {
     }
 
 

@@ -1,5 +1,7 @@
 package tmanZA10.todo.to_do_app.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ class AuthController {
 
     @PostMapping("/signup")
     @CrossOrigin
-    public ResponseEntity<?> signUpUser(@Valid @RequestBody UserSignUpDTO user){
+    public ResponseEntity<?> signUpUser(@Valid @RequestBody SignUpRequestDTO user){
         UserInfoDTO registered;
         try{
             registered = service.signUpNewUser(user);
@@ -50,15 +52,34 @@ class AuthController {
 
     @PostMapping("/login")
     @CrossOrigin
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO){
-        LoggedInUserDTO loggedInUser;
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LogInRequestDTO logInRequestDTO,
+                                       HttpServletResponse response){
+        LogInResponseDTO loggedInUser;
         try {
-            loggedInUser = service.signInUser(userLoginDTO);
+            loggedInUser = service.signInUser(logInRequestDTO);
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new BadRequestDTO(
+                    HttpStatus.NOT_FOUND,
+                    "User not found."
+            ), HttpStatus.NOT_FOUND);
         }catch (BadPasswordException x){
-            return new ResponseEntity<>("Bad password", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(
+                    new BadRequestDTO(
+                            HttpStatus.UNAUTHORIZED,
+                            "Password is invalid."
+                    ),
+                    HttpStatus.UNAUTHORIZED
+            );
         }
+
+        Cookie tokenCookie = new Cookie("refreshToken", loggedInUser.getRefreshToken());
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(false);
+        tokenCookie.setPath("/");
+//        tokenCookie.setMaxAge();
+
+
+        response.addCookie(tokenCookie);
 
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }
