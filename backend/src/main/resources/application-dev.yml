@@ -10,4 +10,9 @@ security:
     exp-time: 900
 
   hash-strength: 14
+  Cors:
+    allow-credentials: true
+    allowed-origins:
+      - "http://localhost:5173"
+    mapping-pattern: "/**"
 
