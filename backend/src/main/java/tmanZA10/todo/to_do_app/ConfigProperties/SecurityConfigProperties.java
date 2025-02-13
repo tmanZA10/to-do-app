@@ -38,7 +38,8 @@ public class SecurityConfigProperties {
 
     public static class Jwt{
         @Name("exp-time")
-        private long expTime;
+        private long accessExpTime;
+        private byte refreshExpDays;
         private String issuer;
 
         public String getIssuer() {
@@ -49,12 +50,20 @@ public class SecurityConfigProperties {
             this.issuer = issuer;
         }
 
-        public long getExpTime() {
-            return expTime;
+        public long getAccessExpTime() {
+            return accessExpTime;
         }
 
-        public void setExpTime(long expTime) {
-            this.expTime = expTime;
+        public void setAccessExpTime(long accessExpTime) {
+            this.accessExpTime = accessExpTime;
+        }
+
+        public byte getRefreshExpDays() {
+            return refreshExpDays;
+        }
+
+        public void setRefreshExpDays(byte refreshExpDays) {
+            this.refreshExpDays = refreshExpDays;
         }
     }
 

@@ -7,7 +7,8 @@ spring:
 security:
   jwt:
     issuer: to-do-app-development
-    exp-time: 900
+    access-exp-time: 900
+    refresh-exp-days: 7
 
   hash-strength: 14
   Cors:

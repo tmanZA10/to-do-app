@@ -1,13 +1,10 @@
 package tmanZA10.todo.to_do_app.security.auth;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tmanZA10.todo.to_do_app.ConfigProperties.SecurityConfigProperties;
-import tmanZA10.todo.to_do_app.dto.UserInfoDTO;
 import tmanZA10.todo.to_do_app.model.User;
 
 import java.security.KeyPair;
@@ -16,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
+import java.util.Base64;
 
 @Component
 public class JWTProvider {
@@ -23,6 +21,7 @@ public class JWTProvider {
     private final KeyPair encryptionKeys;
     public final Algorithm algorithm;
     private final SecurityConfigProperties config;
+    private final Base64.Encoder encoder = Base64.getEncoder();
 
     public JWTProvider(SecurityConfigProperties config){
         try {
@@ -37,18 +36,66 @@ public class JWTProvider {
         this.config = config;
     }
 
+    private String generateRandomString(int length){
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+
+            sb.append((char) ((byte) Math.round(Math.random()*92+33)));
+        }
+
+        return sb.toString();
+    }
+
+
     public String generateToken(User user){
         return JWT.create()
                 .withIssuer(config.getJwt().getIssuer())
                 .withExpiresAt(
                         Instant.now()
                         .plusSeconds(
-                                config.getJwt().getExpTime()
+                                config.getJwt().getAccessExpTime()
                         )
                 )
                 .withSubject(user.getId().toString())
                 .withClaim("name", user.getName())
                 .withClaim("email", user.getEmail())
+                .sign(algorithm);
+    }
+
+    public String generateAccessToken(User user, Instant issuedAt){
+        return JWT.create()
+                .withIssuer(config.getJwt().getIssuer())
+                .withExpiresAt(issuedAt.plusSeconds(
+                        config.getJwt().getAccessExpTime()
+                ))
+                .withSubject(user.getId().toString())
+                .withIssuedAt(issuedAt)
+                .withJWTId(generateRandomString(256))
+                // email
+                .withClaim("eml",
+                        new String(
+                                encoder.encode(user.getEmail().getBytes())
+                        )
+                )
+                .sign(algorithm);
+    }
+
+    public String generateRefreshToken(User user, Instant issuedAt){
+        return JWT.create()
+                .withIssuer(config.getJwt().getIssuer())
+                .withExpiresAt(issuedAt.plusSeconds(
+                        config.getJwt().getAccessExpTime()*24*60*60
+                ))
+                .withSubject(user.getId().toString())
+                .withIssuedAt(issuedAt)
+                .withJWTId(generateRandomString(128))
+                // email
+                .withClaim("eml",
+                        new String(
+                                encoder.encode(user.getEmail().getBytes())
+                        )
+                )
                 .sign(algorithm);
     }
 
