@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tmanZA10.todo.to_do_app.security.auth.JWTProvider;
 import tmanZA10.todo.to_do_app.security.filters.AuthFilter;
+import tmanZA10.todo.to_do_app.security.filters.RefreshTokenFilter;
 
 @Configuration
 public class FilterConfig {
@@ -22,5 +23,13 @@ public class FilterConfig {
         filterRegistrationBean.setFilter(new AuthFilter(jwtProvider));
         filterRegistrationBean.addUrlPatterns("/api/*");
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<RefreshTokenFilter> tokenFilter() {
+        FilterRegistrationBean<RefreshTokenFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new RefreshTokenFilter());
+        filter.addUrlPatterns("/auth/refresh");
+        return filter;
     }
 }
