@@ -72,11 +72,11 @@ public class JWTProvider {
                 ))
                 .withSubject(user.getId().toString())
                 .withIssuedAt(issuedAt)
-                .withJWTId(generateRandomString(256))
-                // email
-                .withClaim("eml",
+                .withJWTId(
                         new String(
-                                encoder.encode(user.getEmail().getBytes())
+                                encoder.encode(
+                                        generateRandomString(256).getBytes()
+                                )
                         )
                 )
                 .sign(algorithm);
@@ -86,17 +86,13 @@ public class JWTProvider {
         return JWT.create()
                 .withIssuer(config.getJwt().getIssuer())
                 .withExpiresAt(issuedAt.plusSeconds(
-                        config.getJwt().getAccessExpTime()*24*60*60
+                        config.getJwt().getRefreshExpDays()*24*60*60
                 ))
                 .withSubject(user.getId().toString())
                 .withIssuedAt(issuedAt)
-                .withJWTId(generateRandomString(128))
-                // email
-                .withClaim("eml",
-                        new String(
-                                encoder.encode(user.getEmail().getBytes())
-                        )
-                )
+                .withJWTId(new String(
+                        encoder.encode(generateRandomString(128).getBytes())
+                ))
                 .sign(algorithm);
     }
 
