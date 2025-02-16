@@ -6,21 +6,29 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tmanZA10.todo.to_do_app.ConfigProperties.SecurityConfigProperties;
 import tmanZA10.todo.to_do_app.dto.*;
-import tmanZA10.todo.to_do_app.exceptions.BadPasswordException;
-import tmanZA10.todo.to_do_app.exceptions.EmailTakenException;
-import tmanZA10.todo.to_do_app.exceptions.PasswordMissMatchException;
-import tmanZA10.todo.to_do_app.exceptions.UserNotFoundException;
+import tmanZA10.todo.to_do_app.exceptions.*;
 import tmanZA10.todo.to_do_app.service.AuthService;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
-class AuthController {
+public class AuthController {
 
-    private AuthService service;
+    private final AuthService service;
+    private final SecurityConfigProperties securityConfig;
+    public static final String refreshCookieName = "refresh_token";
+    public static final String userIdCookieName = "user_id";
+    public static final String emailCookieName = "todo_user_email_cookie";
 
-    public AuthController(AuthService service) {
+
+
+    public AuthController(AuthService service, SecurityConfigProperties securityConfig) {
         this.service = service;
+        this.securityConfig = securityConfig;
     }
 
     @PostMapping("/signup")
@@ -72,16 +80,70 @@ class AuthController {
             );
         }
 
-        Cookie tokenCookie = new Cookie("refreshToken", loggedInUser.getRefreshToken());
+        Cookie tokenCookie, userIdCookie, userEmailCookie;
+
+        tokenCookie = new Cookie(refreshCookieName, loggedInUser.getRefreshToken());
         tokenCookie.setHttpOnly(true);
-        tokenCookie.setSecure(false);
+        tokenCookie.setSecure(securityConfig.isSecureCookies());
         tokenCookie.setPath("/");
 //        tokenCookie.setMaxAge();
 
+        userIdCookie = new Cookie(userIdCookieName, loggedInUser.getUserId().toString());
+        userIdCookie.setHttpOnly(true);
+        userIdCookie.setSecure(securityConfig.isSecureCookies());
+        userIdCookie.setPath("/");
+
+        userEmailCookie = new Cookie(emailCookieName, logInRequestDTO.getEmail());
+        userIdCookie.setHttpOnly(true);
+        userIdCookie.setSecure(securityConfig.isSecureCookies());
+        userIdCookie.setPath("/");
+
 
         response.addCookie(tokenCookie);
+        response.addCookie(userIdCookie);
+        response.addCookie(userEmailCookie);
 
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<?> getToken(
+            @CookieValue(value = refreshCookieName) String token,
+            @CookieValue(value = userIdCookieName) UUID userId,
+            @CookieValue(value = emailCookieName) String email
+            ) {
+        String accessToken;
+
+        try{
+            accessToken = service.getNewAccessToken(token, userId, email);
+        } catch (InvalidTokenException e) {
+            return new ResponseEntity<>(
+                    new BadRequestDTO(
+                            HttpStatus.UNAUTHORIZED,
+                            "Refresh token is invalid."
+                    ),
+                    HttpStatus.UNAUTHORIZED
+            );
+        }catch (ExpiredTokenException e) {
+            return new ResponseEntity<>(
+                    new BadRequestDTO(
+                            HttpStatus.UNAUTHORIZED,
+                            "Refresh token has expired."
+                    ),
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+        catch (UserNotFoundException e) {
+            return new ResponseEntity<>(new BadRequestDTO(
+                    HttpStatus.NOT_FOUND,
+                    "User not found."
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(
+                Map.of("accessToken", accessToken),
+                HttpStatus.OK
+        );
     }
 
 }

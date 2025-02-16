@@ -16,4 +16,5 @@ security:
     allowed-origins:
       - "http://localhost:5173"
     mapping-pattern: "/**"
+  secure-cookies: false
 

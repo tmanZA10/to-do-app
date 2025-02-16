@@ -19,10 +19,7 @@ public class SecurityConfigProperties {
     @NestedConfigurationProperty
     private final Cors cors = new Cors();
     private int hashStrength = 10;
-
-    public Jwt getJwt() {
-        return jwt;
-    }
+    private boolean secureCookies = true;
 
     public int getHashStrength() {
         return hashStrength;
@@ -32,15 +29,27 @@ public class SecurityConfigProperties {
         this.hashStrength = hashStrength;
     }
 
+    public boolean isSecureCookies() {
+        return secureCookies;
+    }
+
+    public void setSecureCookies(boolean secureCookies) {
+        this.secureCookies = secureCookies;
+    }
+
     public Cors getCors() {
         return cors;
     }
 
+    public Jwt getJwt() {
+        return jwt;
+    }
+
     public static class Jwt{
-        @Name("exp-time")
+//        @Name("exp-time")
+        private String issuer;
         private long accessExpTime;
         private byte refreshExpDays;
-        private String issuer;
 
         public String getIssuer() {
             return issuer;

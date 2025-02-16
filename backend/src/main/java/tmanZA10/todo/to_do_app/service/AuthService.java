@@ -1,21 +1,22 @@
 package tmanZA10.todo.to_do_app.service;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import tmanZA10.todo.to_do_app.dto.LogInResponseDTO;
 import tmanZA10.todo.to_do_app.dto.UserInfoDTO;
 import tmanZA10.todo.to_do_app.dto.LogInRequestDTO;
-import tmanZA10.todo.to_do_app.exceptions.BadPasswordException;
-import tmanZA10.todo.to_do_app.exceptions.UserNotFoundException;
+import tmanZA10.todo.to_do_app.exceptions.*;
 import tmanZA10.todo.to_do_app.model.User;
-import tmanZA10.todo.to_do_app.exceptions.EmailTakenException;
-import tmanZA10.todo.to_do_app.exceptions.PasswordMissMatchException;
 import tmanZA10.todo.to_do_app.dto.SignUpRequestDTO;
 import tmanZA10.todo.to_do_app.repository.AuthRepository;
 import tmanZA10.todo.to_do_app.security.PasswordHash;
 import tmanZA10.todo.to_do_app.security.auth.JWTProvider;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -56,5 +57,26 @@ public class AuthService {
                 jwtProvider.generateAccessToken(user, now),
                 jwtProvider.generateRefreshToken(user, now)
         );
+    }
+
+    public String getNewAccessToken(String refreshToken, UUID userId, String email) throws
+            InvalidTokenException, ExpiredTokenException, UserNotFoundException {
+
+        User user = repository.findByIdAndEmail(userId, email);
+        if (user == null) throw new UserNotFoundException();
+        Instant now = Instant.now();
+
+        try{
+            jwtProvider.verifyToken(refreshToken);
+        }catch (SignatureVerificationException x){
+            throw new InvalidTokenException();
+        }catch (TokenExpiredException x){
+            throw new ExpiredTokenException();
+        }
+
+//        System.out.println(decodedRefresh.getToken());
+
+
+        return jwtProvider.generateAccessToken(user, now);
     }
 }
