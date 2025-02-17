@@ -23,6 +23,7 @@ public class AuthController {
     public static final String refreshCookieName = "refresh_token";
     public static final String userIdCookieName = "user_id";
     public static final String emailCookieName = "todo_user_email_cookie";
+    public static final int cookieMaxAge = 7 /*days*/ * 24 * 60 * 60;
 
 
 
@@ -86,17 +87,19 @@ public class AuthController {
         tokenCookie.setHttpOnly(true);
         tokenCookie.setSecure(securityConfig.isSecureCookies());
         tokenCookie.setPath("/");
-//        tokenCookie.setMaxAge();
+        tokenCookie.setMaxAge(cookieMaxAge);
 
         userIdCookie = new Cookie(userIdCookieName, loggedInUser.getUserId().toString());
         userIdCookie.setHttpOnly(true);
         userIdCookie.setSecure(securityConfig.isSecureCookies());
         userIdCookie.setPath("/");
+        userIdCookie.setMaxAge(cookieMaxAge);
 
         userEmailCookie = new Cookie(emailCookieName, logInRequestDTO.getEmail());
-        userIdCookie.setHttpOnly(true);
-        userIdCookie.setSecure(securityConfig.isSecureCookies());
-        userIdCookie.setPath("/");
+        userEmailCookie.setHttpOnly(true);
+        userEmailCookie.setSecure(securityConfig.isSecureCookies());
+        userEmailCookie.setPath("/");
+        userEmailCookie.setMaxAge(cookieMaxAge);
 
 
         response.addCookie(tokenCookie);
