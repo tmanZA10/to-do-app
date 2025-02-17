@@ -28,7 +28,7 @@ export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<S
     confirmPassword
   }
 
-  console.log(data);
+  // console.log(data);
 
   const response = await fetch(
       `${backendURL}/auth/signup`,

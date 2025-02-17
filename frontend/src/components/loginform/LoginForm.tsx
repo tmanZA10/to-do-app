@@ -29,6 +29,7 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
         `${backendURL}/auth/login`,
         {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
