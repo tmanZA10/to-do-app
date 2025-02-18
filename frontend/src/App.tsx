@@ -6,6 +6,7 @@ import NotFound from "./pages/notfound/NotFound.tsx";
 import Home from "./pages/Home.tsx";
 import LogIn from "./pages/login/LogIn.tsx";
 import SignUp from "./pages/signup/SignUp.tsx";
+import AuthProvider from "./context/AuthContext.tsx";
 
 const router = createBrowserRouter(
   [
@@ -48,7 +49,9 @@ function App() {
     //   <Route path="*" element={<NotFound />} />
     // </Routes>
 
-    <RouterProvider router={router} />
+      <AuthProvider>
+          <RouterProvider router={router} />
+      </AuthProvider>
   )
 }
 

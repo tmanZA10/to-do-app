@@ -3,11 +3,13 @@ import {ActionFunctionArgs, Form, useActionData, useNavigate} from "react-router
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
+import useAuth from "../../hooks/UseAuth.tsx";
 
 type LoginFormState = {
     state: "success" | "error",
     message: string,
-    id: number
+    id: number,
+    accessToken: string | null,
 }
 
 export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginFormState> {
@@ -38,10 +40,13 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
     )
 
     if (response.ok) {
+        const responseDate = await response.json()
+        const accessToken:string = responseDate.accessToken!.toString()
         return {
             state: "success",
             message: "Signed up successfully.",
-            id
+            id,
+            accessToken,
         }
     }else {
         let message: string;
@@ -57,7 +62,8 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
         return {
             state: "error",
             message,
-            id
+            id,
+            accessToken: null
         }
     }
 }
@@ -73,6 +79,7 @@ function LoginForm() {
     const response = useRef<LoginFormState | undefined>(undefined);
 
     const res = useActionData<LoginFormState>()
+    const { setAccessToken, accessToken } = useAuth()
 
     useEffect(() => {
         if (password ==="") {
@@ -105,9 +112,11 @@ function LoginForm() {
     }, [password]);
 
     useEffect(() => {
+        console.log(accessToken)
         if (res !== undefined){
 
             if (res.state === "success"){
+                setAccessToken(res.accessToken!)
                 setLoading(false)
                 setTimeout(() => navigate("../"), redirectionDelay)
             }else {
