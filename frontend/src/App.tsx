@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import Layout from "./layouts/Layout"
+import MainLayout from "./layouts/MainLayout.tsx"
 import { SignUpFormAction } from "./components/signupform/SignUpForm"
 import {LogInAction} from "./components/loginform/LoginForm.tsx";
 import NotFound from "./pages/notfound/NotFound.tsx";
@@ -7,30 +7,37 @@ import Home from "./pages/Home.tsx";
 import LogIn from "./pages/login/LogIn.tsx";
 import SignUp from "./pages/signup/SignUp.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
+import AuthLayout from "./layouts/AuthLayout.tsx";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: <Layout />,
+      element: <MainLayout />,
       errorElement: <NotFound />,
       children: [
         {
           path: "",
           element: <Home />
         },
+      ]
+    },
+    {
+      path: "auth",
+      element: <AuthLayout />,
+      children: [
         {
-          path: "/login",
+          path: "login",
           element: <LogIn />,
           action: LogInAction
         },
         {
-          path: "/signup",
+          path: "signup",
           element: <SignUp />,
           action: SignUpFormAction
-        },
+        }
       ]
-    },
+    }
   ]
 )
 
@@ -38,16 +45,6 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    // <Routes>
-    //   <Route path="/" element={<Layout />}>
-    //     <Route index element={<Home />} />
-    //     <Route path="tasks" element={<ViewTasks />} />
-    //     <Route path="addTask" element={<AddTask />} />
-    //     <Route path="editTasks" element={<EditTasks />} />
-    //   </Route>
-    //   <Route path="/login" element={<LogIn />} />
-    //   <Route path="*" element={<NotFound />} />
-    // </Routes>
 
       <AuthProvider>
           <RouterProvider router={router} />
