@@ -8,6 +8,7 @@ import LogIn from "./pages/login/LogIn.tsx";
 import SignUp from "./pages/signup/SignUp.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
+import AutoLogin from "./pages/autologin/AutoLogin.tsx";
 
 const router = createBrowserRouter(
   [
@@ -37,6 +38,10 @@ const router = createBrowserRouter(
           action: SignUpFormAction
         }
       ]
+    },
+    {
+      path: "auto/login",
+      element: <AutoLogin />
     }
   ]
 )

@@ -1,5 +1,5 @@
 import styles from './LoginForm.module.css'
-import {ActionFunctionArgs, Form, useActionData, useNavigate} from "react-router-dom";
+import {ActionFunctionArgs, Form, useActionData, useLocation, useNavigate} from "react-router-dom";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
@@ -71,6 +71,7 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
 function LoginForm() {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [password, setPassword] = useState("")
     const [passError, setPassError] = useState<string[] | null>(null);
@@ -79,7 +80,12 @@ function LoginForm() {
     const response = useRef<LoginFormState | undefined>(undefined);
 
     const res = useActionData<LoginFormState>()
-    const { setAccessToken, accessToken } = useAuth()
+    const { setAccessToken } = useAuth()
+    const redirect = useRef<string>();
+
+    useEffect(() => {
+        redirect.current = location.state?.redirectPath || "../"
+    }, []);
 
     useEffect(() => {
         if (password ==="") {
@@ -112,13 +118,12 @@ function LoginForm() {
     }, [password]);
 
     useEffect(() => {
-        console.log(accessToken)
         if (res !== undefined){
 
             if (res.state === "success"){
                 setAccessToken(res.accessToken!)
                 setLoading(false)
-                setTimeout(() => navigate("../"), redirectionDelay)
+                setTimeout(() => navigate(redirect.current!), redirectionDelay)
             }else {
                 if (response.current === undefined){
                     response.current = res
