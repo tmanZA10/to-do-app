@@ -1,0 +1,19 @@
+
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header h4{
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+.list{
+    padding: 0;
+    display: flex;
+    gap: 6px;
+    flex-direction: column;
+}

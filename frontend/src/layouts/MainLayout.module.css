@@ -1,0 +1,6 @@
+.layout {
+    margin-top: var(--headline);
+    padding-left: var(--left-sidebar-width);
+    padding-right: calc(var(--right-sidebar-width) + 10px);
+    background-color: var(--primary-color);
+}

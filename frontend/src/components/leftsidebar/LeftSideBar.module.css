@@ -1,0 +1,82 @@
+.container{
+    background-color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--left-sidebar-width);
+    /*padding-left: 10px;*/
+}
+
+.heading{
+    color: var(--accent-color);
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: 900;
+    margin-top: 12px;
+    margin-bottom: 0;
+    font-family: var(--heading-font), monospace;
+}
+
+.myListsContainer{
+    --list-left-padding: 8px;
+    color: var(--secondary-color);
+    margin-top: 40px;
+    margin-left: 6px;
+    flex:1;
+}
+
+.myListsContainer h3{
+    margin: 0;
+    font-family: var(--heading-font);
+    font-size: 1.8rem;
+}
+
+.myListsContainer ul{
+    list-style: none;
+    padding-left: var(--list-left-padding);
+    margin-top: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.activeList{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.2rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    width: 60%;
+    border-radius: 8px;
+}
+
+.inactiveList{
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.2rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    width: 60%;
+}
+
+.inactiveList:hover{
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+}
+
+.addNewList{
+    padding-left: calc(var(--list-left-padding)*3);
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+

@@ -12,7 +12,7 @@
 
 .inputContainer label{
     margin-left: .6rem;
-    color: var(--black-color);
+    color: var(--secondary-color);
     font-weight: 900;
 }
 
@@ -27,9 +27,9 @@
 
 .submitButton{
     border: none;
-    background-color: var(--hue-color);
+    background-color: var(--accent-color);
     height: 4rem;
-    color: var(--white-color);
+    color: var(--primary-color);
     border-radius: 4rem;
     margin-top: 1rem;
     font-weight: 900;

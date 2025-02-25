@@ -1,5 +1,5 @@
 .page{
-    background-color: var(--white-color);
+    background-color: var(--primary-color);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -17,7 +17,7 @@
 .content h1{
     margin: 0;
     margin-bottom: 1rem;
-    color: var(--black-color);
+    color: var(--secondary-color);
     text-align: left;
     font-size: 2.4rem;
 }
@@ -28,7 +28,7 @@
 }
 
 .signUp{
-    color: var(--hue-color);
+    color: var(--accent-color);
     font-weight: 900;
     font-size: 1.8rem;
 }

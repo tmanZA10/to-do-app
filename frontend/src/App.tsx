@@ -3,12 +3,12 @@ import MainLayout from "./layouts/MainLayout.tsx"
 import { SignUpFormAction } from "./components/signupform/SignUpForm"
 import {LogInAction} from "./components/loginform/LoginForm.tsx";
 import NotFound from "./pages/notfound/NotFound.tsx";
-import Home from "./pages/Home.tsx";
 import LogIn from "./pages/login/LogIn.tsx";
 import SignUp from "./pages/signup/SignUp.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import AutoLogin from "./pages/autologin/AutoLogin.tsx";
+import MainPage from "./pages/mainpage/MainPage.tsx";
 
 const router = createBrowserRouter(
   [
@@ -18,8 +18,8 @@ const router = createBrowserRouter(
       errorElement: <NotFound />,
       children: [
         {
-          path: "",
-          element: <Home />
+          path: "/:list",
+          element: <MainPage />
         },
       ]
     },
