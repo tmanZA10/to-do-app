@@ -2,6 +2,7 @@ package tmanZA10.todo.to_do_app.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,6 +20,9 @@ public class User {
     private String email;
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
+
+    @OneToMany(mappedBy = "owner")
+    private List<TaskList> tasks;
 
     public User() {
     }
