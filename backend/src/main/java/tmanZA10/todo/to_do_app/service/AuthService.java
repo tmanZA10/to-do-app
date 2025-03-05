@@ -79,4 +79,8 @@ public class AuthService {
 
         return jwtProvider.generateAccessToken(user, now);
     }
+
+    public boolean userExists(UUID userId) {
+        return repository.existsById(userId);
+    }
 }

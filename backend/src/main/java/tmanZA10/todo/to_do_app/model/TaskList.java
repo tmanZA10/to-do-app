@@ -25,4 +25,46 @@ public class TaskList {
 
     public TaskList() {
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public void setListName(String listName) {
+        this.listName = listName;
+    }
+
+    public List<String> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<String> tasks) {
+        this.tasks = tasks;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskList{" +
+                "id=" + id +
+                ", listName='" + listName + '\'' +
+                ", tasks=" + tasks +
+                ", owner=" + owner +
+                '}';
+    }
 }
