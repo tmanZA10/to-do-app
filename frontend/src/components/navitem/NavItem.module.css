@@ -1,0 +1,66 @@
+.container {
+    display: flex;
+    border: 1px solid;
+    padding: .8rem .6rem;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.container a{
+    text-decoration: none;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    font-weight: bold;
+    flex: 1;
+}
+
+.container button{
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    font-weight: bold;
+}
+
+.active{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.active button{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.active button:hover{
+    background-color: var(--primary-color);
+    color: var(--secondary-color)
+}
+
+.active a{
+    color: var(--primary-color);
+}
+
+
+.inactive{
+    border-color: var(--primary-color);
+}
+
+.inactive:hover{
+    border-color: var(--secondary-color);
+}
+
+.inactive a{
+    color: var(--secondary-color);
+}
+
+.inactive button{
+    color: var(--secondary-color);
+}
+
+.inactive button:hover{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
