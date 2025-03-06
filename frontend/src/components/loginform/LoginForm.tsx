@@ -10,6 +10,7 @@ type LoginFormState = {
     message: string,
     id: number,
     accessToken: string | null,
+    userId: string | null,
 }
 
 export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginFormState> {
@@ -42,11 +43,13 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
     if (response.ok) {
         const responseDate = await response.json()
         const accessToken:string = responseDate.accessToken!.toString()
+        const userId:string = responseDate.userId!.toString()
         return {
             state: "success",
             message: "Signed up successfully.",
             id,
             accessToken,
+            userId
         }
     }else {
         let message: string;
@@ -63,7 +66,8 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
             state: "error",
             message,
             id,
-            accessToken: null
+            accessToken: null,
+            userId: null
         }
     }
 }
@@ -80,7 +84,7 @@ function LoginForm() {
     const response = useRef<LoginFormState | undefined>(undefined);
 
     const res = useActionData<LoginFormState>()
-    const { setAccessToken } = useAuth()
+    const { setAccessToken, setUserId } = useAuth()
     const redirect = useRef<string>();
 
     useEffect(() => {
@@ -122,6 +126,7 @@ function LoginForm() {
 
             if (res.state === "success"){
                 setAccessToken(res.accessToken!)
+                setUserId(res.userId!)
                 setLoading(false)
                 setTimeout(() => navigate(redirect.current!), redirectionDelay)
             }else {
