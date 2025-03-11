@@ -8,9 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tmanZA10.todo.to_do_app.ConfigProperties.SecurityConfigProperties;
 import tmanZA10.todo.to_do_app.dto.*;
+import tmanZA10.todo.to_do_app.dto.error.BadRequestDTO;
+import tmanZA10.todo.to_do_app.dto.request.LogInRequestDTO;
+import tmanZA10.todo.to_do_app.dto.request.SignUpRequestDTO;
+import tmanZA10.todo.to_do_app.dto.response.LogInResponseDTO;
 import tmanZA10.todo.to_do_app.exceptions.*;
+import tmanZA10.todo.to_do_app.model.User;
 import tmanZA10.todo.to_do_app.service.AuthService;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,7 +61,7 @@ public class AuthController {
                             )
                     );
         }
-        return ResponseEntity.status(HttpStatus.OK).body(registered);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registered);
 
     }
 
@@ -63,7 +69,7 @@ public class AuthController {
     @CrossOrigin
     public ResponseEntity<?> loginUser(@Valid @RequestBody LogInRequestDTO logInRequestDTO,
                                        HttpServletResponse response){
-        LogInResponseDTO loggedInUser;
+        User loggedInUser;
         try {
             loggedInUser = service.signInUser(logInRequestDTO);
         } catch (UserNotFoundException e) {
@@ -81,15 +87,17 @@ public class AuthController {
             );
         }
 
+        Instant now = Instant.now();
+
         Cookie tokenCookie, userIdCookie, userEmailCookie;
 
-        tokenCookie = new Cookie(refreshCookieName, loggedInUser.getRefreshToken());
+        tokenCookie = new Cookie(refreshCookieName, service.generateRefreshToken(loggedInUser, now));
         tokenCookie.setHttpOnly(true);
         tokenCookie.setSecure(securityConfig.isSecureCookies());
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(cookieMaxAge);
 
-        userIdCookie = new Cookie(userIdCookieName, loggedInUser.getUserId().toString());
+        userIdCookie = new Cookie(userIdCookieName, loggedInUser.getId().toString());
         userIdCookie.setHttpOnly(true);
         userIdCookie.setSecure(securityConfig.isSecureCookies());
         userIdCookie.setPath("/");
@@ -106,7 +114,9 @@ public class AuthController {
         response.addCookie(userIdCookie);
         response.addCookie(userEmailCookie);
 
-        return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+        return new ResponseEntity<>(new LogInResponseDTO(
+            loggedInUser.getId(), service.generateAccessToken(loggedInUser, now)
+        ), HttpStatus.OK);
     }
 
     @GetMapping("/refresh")

@@ -1,4 +1,4 @@
-package tmanZA10.todo.to_do_app.dto;
+package tmanZA10.todo.to_do_app.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

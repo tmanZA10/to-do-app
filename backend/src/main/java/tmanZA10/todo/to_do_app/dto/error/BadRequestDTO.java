@@ -1,4 +1,4 @@
-package tmanZA10.todo.to_do_app.dto;
+package tmanZA10.todo.to_do_app.dto.error;
 
 import org.springframework.http.HttpStatus;
 

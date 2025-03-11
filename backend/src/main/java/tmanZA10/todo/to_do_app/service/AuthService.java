@@ -2,15 +2,13 @@ package tmanZA10.todo.to_do_app.service;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import tmanZA10.todo.to_do_app.dto.LogInResponseDTO;
 import tmanZA10.todo.to_do_app.dto.UserInfoDTO;
-import tmanZA10.todo.to_do_app.dto.LogInRequestDTO;
+import tmanZA10.todo.to_do_app.dto.request.LogInRequestDTO;
 import tmanZA10.todo.to_do_app.exceptions.*;
 import tmanZA10.todo.to_do_app.model.User;
-import tmanZA10.todo.to_do_app.dto.SignUpRequestDTO;
+import tmanZA10.todo.to_do_app.dto.request.SignUpRequestDTO;
 import tmanZA10.todo.to_do_app.repository.AuthRepository;
 import tmanZA10.todo.to_do_app.security.PasswordHash;
 import tmanZA10.todo.to_do_app.security.auth.JWTProvider;
@@ -45,18 +43,21 @@ public class AuthService {
         return new UserInfoDTO(registeredUser.getId(), registeredUser.getName(), registeredUser.getEmail());
     }
 
-    public LogInResponseDTO signInUser(LogInRequestDTO logInRequestDTO) throws
+    public User signInUser(LogInRequestDTO logInRequestDTO) throws
                                                             UserNotFoundException,
                                                             BadPasswordException {
         User user = repository.findByEmail(logInRequestDTO.getEmail());
         if (user == null) throw new UserNotFoundException();
         if (!passwordHash.verify(logInRequestDTO.getPassword(), user.getPassword())) throw new BadPasswordException();
-        Instant now = Instant.now();
-        return new LogInResponseDTO(
-                user.getId(),
-                jwtProvider.generateAccessToken(user, now),
-                jwtProvider.generateRefreshToken(user, now)
-        );
+        return user;
+    }
+
+    public String generateAccessToken(User user, Instant now) {
+        return jwtProvider.generateAccessToken(user, now);
+    }
+
+    public String generateRefreshToken(User user, Instant now) {
+        return jwtProvider.generateRefreshToken(user, now);
     }
 
     public String getNewAccessToken(String refreshToken, UUID userId, String email) throws
@@ -73,10 +74,6 @@ public class AuthService {
         }catch (TokenExpiredException x){
             throw new ExpiredTokenException();
         }
-
-//        System.out.println(decodedRefresh.getToken());
-
-
         return jwtProvider.generateAccessToken(user, now);
     }
 

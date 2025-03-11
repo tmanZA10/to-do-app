@@ -1,4 +1,4 @@
-package tmanZA10.todo.to_do_app.dto;
+package tmanZA10.todo.to_do_app.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.validation.constraints.Email;
