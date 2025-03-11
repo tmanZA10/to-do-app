@@ -21,7 +21,7 @@ public class User {
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "user")
     private List<TaskList> tasks;
 
     public User() {
