@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class AuthFilter implements Filter {
 
-    private JWTProvider jwtProvider;
+    private final JWTProvider jwtProvider;
 
     public AuthFilter(JWTProvider jwtProvider) {
         this.jwtProvider = jwtProvider;

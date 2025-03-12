@@ -7,8 +7,6 @@ import tmanZA10.todo.to_do_app.ConfigProperties.SecurityConfigProperties;
 
 import static tmanZA10.todo.to_do_app.ConfigProperties.SecurityConfigProperties.Cors;
 
-import java.util.List;
-
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
@@ -27,6 +25,9 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowCredentials(corsProperties.isAllowCredentials())
                 .allowedMethods(
                         corsProperties.getAllowedMethods().toArray(new String[0])
+                )
+                .allowedHeaders(
+                        corsProperties.getAllowedHeaders().toArray(new String[0])
                 );
     }
 }

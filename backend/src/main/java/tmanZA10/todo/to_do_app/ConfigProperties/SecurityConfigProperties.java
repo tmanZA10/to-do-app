@@ -80,7 +80,8 @@ public class SecurityConfigProperties {
         private boolean allowCredentials = false;
         private List<String> allowedOrigins = new ArrayList<>();
         private String mappingPattern = "/**";
-        private List<String> allowedMethods = List.of("GET", "POST", "PUT", "DELETE");
+        private List<String> allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS");
+        private List<String> allowedHeaders = List.of("Authorization", "Content-Type");
 
         public boolean isAllowCredentials() {
             return allowCredentials;
@@ -112,6 +113,14 @@ public class SecurityConfigProperties {
 
         public void setAllowedMethods(List<String> allowedMethods) {
             this.allowedMethods = allowedMethods;
+        }
+
+        public List<String> getAllowedHeaders() {
+            return allowedHeaders;
+        }
+
+        public void setAllowedHeaders(List<String> allowedHeaders) {
+            this.allowedHeaders = allowedHeaders;
         }
     }
 }

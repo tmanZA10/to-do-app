@@ -10,7 +10,7 @@ import tmanZA10.todo.to_do_app.security.filters.RefreshTokenFilter;
 @Configuration
 public class FilterConfig {
 
-    private JWTProvider jwtProvider;
+    private final JWTProvider jwtProvider;
 
     public FilterConfig(JWTProvider jwtProvider) {
         this.jwtProvider = jwtProvider;
