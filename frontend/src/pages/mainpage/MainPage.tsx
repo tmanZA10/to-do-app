@@ -4,7 +4,7 @@ import AddNewTask from "../../components/addnewtask/AddNewTask.tsx";
 import TaskList from "../../components/tasklist/TaskList.tsx";
 
 function MainPage() {
-  console.log(useParams())
+  // console.log(useParams())
   return (
     <div className={styles.page}>
       {/*haha*/}

@@ -1,35 +1,44 @@
 import styles from './NavItem.module.css'
-import {useState} from "react";
-import {NavLink, NavLinkRenderProps} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import {useEffect} from "react";
 
 type propTypes = {
-  listName: string
+  listName: string;
+  navItemId: number;
+  activeId: number | null;
+  setActiveId: (id: number) => void;
 }
 
-function NavItem({ listName }:propTypes) {
+function NavItem({ listName, navItemId, setActiveId, activeId }:propTypes) {
 
-  const [active, setActive] = useState(false)
+  const params = useParams()
 
-
-  function handleActiveChange({ isActive }: NavLinkRenderProps) {
-    setActive(isActive)
-
-    return undefined
-  }
+  useEffect(() => {
+    if (params.list === listName){
+      setActiveId(navItemId)
+    }
+  },[])
 
   function classAllocator(){
-    return active ? `${styles.container} ${styles.active}` :
-      `${styles.container} ${styles.inactive}`
+
+    return activeId === navItemId || params.list === listName
+      ? `${styles.container} ${styles.active}`
+      : `${styles.container} ${styles.inactive}`
+  }
+
+  function handleClick(){
+    setActiveId(navItemId)
   }
 
   return (
     <div className={classAllocator()}>
-      <NavLink
-        to={`/${listName}`}
-        className={handleActiveChange}
-      >
-        {listName}
-      </NavLink>
+      <div onClick={handleClick}>
+        <Link
+          to={`/${listName}`}
+        >
+          {listName}
+        </Link>
+      </div>
       <button>x</button>
     </div>
   );

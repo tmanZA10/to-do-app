@@ -1,7 +1,9 @@
 import styles from './LeftSideBar.module.css'
 import { Link } from "react-router-dom";
 import NavItem from "../navitem/NavItem.tsx";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import useAuth from '../../hooks/UseAuth.tsx'
+import {backendURL} from "../../AppVariables.ts";
 
 type taskListType = {
   id: number;
@@ -10,7 +12,39 @@ type taskListType = {
 
 function LeftSideBar() {
 
+  const { accessToken, userId } = useAuth()
+
   const [taskList, setTaskList] = useState<taskListType[]>([])
+  const [activeId, setActiveId] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch(
+      `${backendURL}/api/tasklist/all/${userId}`,
+      {
+        method: "GET",
+        headers:{
+          // contentType: "application/json",
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    )
+      .then(res => res.json())
+      .then(data => {
+        for (const item of data.taskLists){
+          setTaskList(
+            t => {
+              t.push({
+                id: item.id,
+                name: item.listName,
+              })
+              // console.log(t)
+              return [...t]
+            }
+          )
+        }
+        // console.log(taskList)
+      })
+  },[])
 
   return (
     <nav className={styles.container}>
@@ -22,7 +56,12 @@ function LeftSideBar() {
           taskList.length ? <ul>{
             taskList.map(
               (task =><li key={task.id}>
-                <NavItem listName={task.name} />
+                <NavItem
+                  listName={task.name}
+                  navItemId={task.id}
+                  activeId={activeId}
+                  setActiveId={setActiveId}
+                />
               </li>)
             )
           }</ul> : <p>No TaskList</p>
