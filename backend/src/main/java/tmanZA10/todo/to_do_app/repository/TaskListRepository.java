@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface TaskListRepository extends JpaRepository<TaskList, Long> {
 
     List<TaskList> findAllByUserId(UUID userId);
+    boolean existsByIdAndUserId(long id, UUID userId);
 }
