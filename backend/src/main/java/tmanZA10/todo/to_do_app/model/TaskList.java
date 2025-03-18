@@ -2,6 +2,8 @@ package tmanZA10.todo.to_do_app.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table( uniqueConstraints = {
         @UniqueConstraint(
@@ -19,6 +21,9 @@ public class TaskList {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "taskList")
+    private List<Task> tasks;
 
     public TaskList() {
     }
