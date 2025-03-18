@@ -154,7 +154,10 @@ public class AuthController {
         }
 
         return new ResponseEntity<>(
-                Map.of("accessToken", accessToken),
+                Map.of(
+                        "accessToken", accessToken,
+                        "userId", userId
+                ),
                 HttpStatus.OK
         );
     }
