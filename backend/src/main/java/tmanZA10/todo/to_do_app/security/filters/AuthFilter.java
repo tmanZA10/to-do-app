@@ -45,6 +45,7 @@ public class AuthFilter implements Filter {
         String[] authTokenSplit = authHeader.split(" ");
         if (authTokenSplit.length != 2) {
             response.sendError(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
 
         String token = authTokenSplit[1];
@@ -52,6 +53,7 @@ public class AuthFilter implements Filter {
             jwtProvider.verifyToken(token);
         }catch (SignatureVerificationException | TokenExpiredException e){
             response.sendError(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
