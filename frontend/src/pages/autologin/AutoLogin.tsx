@@ -6,13 +6,13 @@ import LoadingSpinner from "../../components/loadingspinner/LoadingSpinner.tsx";
 
 
 function AutoLogin() {
-  const { accessToken, setAccessToken } = useAuth()
+  const { accessToken, setAccessToken, userId, setUserId } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const redirectPath = useRef(location.state?.from?.pathname || "../");
 
   useEffect(() => {
-    if (accessToken){
+    if (accessToken || userId) {
       navigate(redirectPath.current)
       return;
     }
@@ -32,8 +32,9 @@ function AutoLogin() {
       }
       return res.json()
     }).then((data)=>{
-      if (data?.accessToken){
+      if (data?.accessToken && data?.userId){
         setAccessToken(data.accessToken)
+        setUserId(data.userId)
         navigate(redirectPath.current)
       }
     })
