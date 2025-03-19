@@ -45,8 +45,9 @@ public class TasksByIdResponseDTO {
         dto.setUserId(userId);
         dto.setListId(listId);
         List<TaskDTO> tasksDTO = new ArrayList<>();
-        TaskDTO taskDTO = new TaskDTO();
+        TaskDTO taskDTO;
         for (Task task : tasks) {
+            taskDTO = new TaskDTO();
             taskDTO.setId(task.getId());
             taskDTO.setTask(task.getTask());
             taskDTO.setCompleted(task.isCompleted());
