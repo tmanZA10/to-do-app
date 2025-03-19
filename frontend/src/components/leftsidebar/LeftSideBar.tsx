@@ -15,7 +15,6 @@ function LeftSideBar() {
   const { accessToken, userId } = useAuth()
 
   const [taskList, setTaskList] = useState<taskListType[]>([])
-  const [activeId, setActiveId] = useState<number | null>(null)
 
   useEffect(() => {
     fetch(
@@ -59,8 +58,6 @@ function LeftSideBar() {
                 <NavItem
                   listName={task.name}
                   navItemId={task.id}
-                  activeId={activeId}
-                  setActiveId={setActiveId}
                 />
               </li>)
             )

@@ -1,33 +1,33 @@
 import styles from './NavItem.module.css'
 import { Link, useParams } from "react-router-dom";
 import {useEffect} from "react";
+import useCurrentList from "../../hooks/UseCurrentList.tsx";
 
 type propTypes = {
   listName: string;
   navItemId: number;
-  activeId: number | null;
-  setActiveId: (id: number) => void;
 }
 
-function NavItem({ listName, navItemId, setActiveId, activeId }:propTypes) {
+function NavItem({ listName, navItemId }:propTypes) {
 
   const params = useParams()
+  const {listId, setListId} = useCurrentList()
 
   useEffect(() => {
     if (params.list === listName){
-      setActiveId(navItemId)
+      setListId(navItemId)
     }
   },[])
 
   function classAllocator(){
 
-    return activeId === navItemId || params.list === listName
+    return listId === navItemId || params.list === listName
       ? `${styles.container} ${styles.active}`
       : `${styles.container} ${styles.inactive}`
   }
 
   function handleClick(){
-    setActiveId(navItemId)
+    setListId(navItemId)
   }
 
   return (
