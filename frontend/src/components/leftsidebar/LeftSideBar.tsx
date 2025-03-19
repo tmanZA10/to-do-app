@@ -4,7 +4,7 @@ import {ChangeEvent, useEffect, useState} from "react";
 import useAuth from '../../hooks/UseAuth.tsx'
 import {backendURL} from "../../AppVariables.ts";
 
-type taskListType = {
+export type taskListType = {
   id: number;
   name: string;
 }
@@ -105,6 +105,7 @@ function LeftSideBar() {
                 <NavItem
                   listName={task.name}
                   navItemId={task.id}
+                  setTaskList={setTaskList}
                 />
               </li>)
             )

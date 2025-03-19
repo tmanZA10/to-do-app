@@ -1,17 +1,22 @@
 import styles from './NavItem.module.css'
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
+import useAuth from "../../hooks/UseAuth.tsx";
+import {backendURL} from "../../AppVariables.ts";
+import {taskListType} from "../leftsidebar/LeftSideBar.tsx";
 
 type propTypes = {
   listName: string;
   navItemId: number;
+  setTaskList: (taskList: taskListType[]) => void;
 }
 
-function NavItem({ listName, navItemId }:propTypes) {
+function NavItem({ listName, navItemId, setTaskList }:propTypes) {
 
   const params = useParams()
   const {listId, setListId} = useCurrentList()
+  const { userId, accessToken } = useAuth()
 
   useEffect(() => {
     if (params.list === listName){
@@ -30,6 +35,30 @@ function NavItem({ listName, navItemId }:propTypes) {
     setListId(navItemId)
   }
 
+  function handleDelete(){
+    fetch(
+      `${backendURL}/api/tasklist/delete/${userId}/${navItemId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    ).then(res => res.json())
+      .then(data =>{
+        const newTaskList:taskListType[] = []
+        for (const item of data.taskLists){
+          newTaskList.push(
+            {
+              id: item.id,
+              name: item.listName
+            }
+          )
+        }
+        setTaskList(newTaskList)
+      })
+  }
+
   return (
     <div className={classAllocator()}>
       <div onClick={handleClick}>
@@ -39,7 +68,7 @@ function NavItem({ listName, navItemId }:propTypes) {
           {listName}
         </Link>
       </div>
-      <button>x</button>
+      <button onClick={handleDelete}>x</button>
     </div>
   );
 }
