@@ -68,17 +68,30 @@ public class TaskListController {
                 ));
     }
 
-//    @DeleteMapping("delete/{userId}/{taskListId}")
-//    public ResponseEntity<?> deleteTaskList(
-//            @PathVariable UUID userId,
-//            @PathVariable long taskListId
-//    ) {
-//        System.out.println(userId);
-//        System.out.println(taskListId);
-//        if (!authService.userExists(userId)) return invalidUser();
-//        taskListService.deleteTaskList(taskListId, userId);
-//        return ResponseEntity.status(HttpStatus.OK).build();
-//    }
+    @DeleteMapping("delete/{userId}/{taskListId}")
+    public ResponseEntity<?> deleteTaskList(
+            @PathVariable UUID userId,
+            @PathVariable long taskListId
+    ) {
+        if (taskListService.existsByIdAndUserId(taskListId, userId)){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(
+                            new BadRequestDTO(
+                                    HttpStatus.NOT_FOUND,
+                                    "Tasklist does not exist."
+                            )
+                    );
+        }
+
+        taskListService.deleteTaskList(taskListId);
+        List<TaskList> allTaskLists = taskListService.getTaskListsByUserId(userId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        TaskListsResponseDTO.create(allTaskLists, userId)
+                );
+    }
 
     private ResponseEntity<BadRequestDTO> invalidUser() {
         return ResponseEntity

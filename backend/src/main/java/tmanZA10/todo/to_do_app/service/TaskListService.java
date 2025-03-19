@@ -39,4 +39,7 @@ public class TaskListService {
         return !repo.existsByIdAndUserId(id, userId);
     }
 
+    public void deleteTaskList(long taskListId) {
+        repo.deleteById(taskListId);
+    }
 }
