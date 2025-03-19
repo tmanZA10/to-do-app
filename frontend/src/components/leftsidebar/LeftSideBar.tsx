@@ -1,7 +1,6 @@
 import styles from './LeftSideBar.module.css'
-import { Link } from "react-router-dom";
 import NavItem from "../navitem/NavItem.tsx";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import useAuth from '../../hooks/UseAuth.tsx'
 import {backendURL} from "../../AppVariables.ts";
 
@@ -15,6 +14,8 @@ function LeftSideBar() {
   const { accessToken, userId } = useAuth()
 
   const [taskList, setTaskList] = useState<taskListType[]>([])
+  const [errorMessage, setErrorMessage] = useState("")
+  const [newTaskInput, setNewTaskInput] = useState("")
 
   useEffect(() => {
     fetch(
@@ -30,20 +31,66 @@ function LeftSideBar() {
       .then(res => res.json())
       .then(data => {
         for (const item of data.taskLists){
-          setTaskList(
-            t => {
-              t.push({
-                id: item.id,
-                name: item.listName,
-              })
-              // console.log(t)
-              return [...t]
-            }
-          )
+          taskList.push({
+            id: item.id,
+            name: item.listName,
+          })
         }
-        // console.log(taskList)
+        setTaskList([...taskList])
       })
   },[])
+
+  useEffect(() => {
+    if (errorMessage !== ""){
+      setErrorMessage("")
+    }
+  }, [newTaskInput]);
+
+  function handleInput({ target }: ChangeEvent<HTMLInputElement>){
+    setNewTaskInput(target.value)
+  }
+
+  function handleSubmit(){
+    if (newTaskInput === ""){
+      setErrorMessage("New task is empty.")
+      return
+    }
+    if (newTaskInput.trim() === ""){
+      setErrorMessage("New task is blank")
+      return
+    }
+
+    for (const item of taskList){
+      if (item.name === newTaskInput.trim()){
+        setErrorMessage("List already exists.")
+        return
+      }
+    }
+
+    fetch(
+      `${backendURL}/api/tasklist/new`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userId, listName: newTaskInput})
+      }
+    )
+      .then(res => res.json())
+      .then(data => {
+        const newList: taskListType[] = []
+        for (const item of data.taskLists){
+          newList.push({
+            id: item.id,
+            name: item.listName,
+          })
+        }
+        setTaskList(newList)
+        setNewTaskInput("")
+      })
+  }
 
   return (
     <nav className={styles.container}>
@@ -52,7 +99,7 @@ function LeftSideBar() {
         <h3>My lists</h3>
 
         {
-          taskList.length ? <ul>{
+          taskList.length !== 0 && <ul>{
             taskList.map(
               (task =><li key={task.id}>
                 <NavItem
@@ -61,30 +108,26 @@ function LeftSideBar() {
                 />
               </li>)
             )
-          }</ul> : <p>No TaskList</p>
+          }</ul>
         }
-
-        <ul>
-          {/*<li>*/}
-          {/*  <NavItem listName={"work"} />*/}
-          {/*</li>*/}
-          {/*<li>*/}
-          {/*  <NavItem listName={"personal"} />*/}
-          {/*</li>*/}
-
-          {/*<li>*/}
-          {/*  <NavLink*/}
-          {/*    to="/home"*/}
-          {/*    className={classAllocator}*/}
-          {/*  >Home</NavLink>*/}
-          {/*</li>*/}
-          {/*<li>*/}
-          {/*  <NavLink to={"/Work"} className={classAllocator}>*/}
-          {/*    Work*/}
-          {/*  </NavLink>*/}
-          {/*</li>*/}
-        </ul>
-        <Link to={"#"} className={styles.addNewList}>+New List</Link>
+        <div>
+          {errorMessage.length !==0 &&
+              <p className={styles.newListErrorMessage}>{errorMessage}</p>}
+          <div className={styles.newListContainer}>
+            <input
+              type="text"
+              placeholder="New Task"
+              value={newTaskInput}
+              onChange={handleInput}
+            />
+            <button
+              type="submit"
+              onClick={handleSubmit}
+            >
+              Add
+            </button>
+          </div>
+        </div>
       </div>
 
     </nav>

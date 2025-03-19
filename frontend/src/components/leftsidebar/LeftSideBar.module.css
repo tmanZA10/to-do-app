@@ -8,6 +8,7 @@
     left: 0;
     width: var(--left-sidebar-width);
     /*padding-left: 10px;*/
+    /*background: lightpink;*/
 }
 
 .heading{
@@ -73,10 +74,49 @@
     border-radius: 8px;
 }
 
-.addNewList{
-    padding-left: calc(var(--list-left-padding)*3);
-    text-decoration: none;
+.newListContainer{
+    /*display: flex;*/
+    width: 100%;
+    margin-left: 8px;
+
+}
+
+.newListContainer input{
+    width: 68%;
+    padding: .6rem ;
+    border: 2px solid var(--accent-color);
+    border-right: none;
+    border-top-left-radius: .6rem;
+    border-bottom-left-radius: .6rem;
+}
+
+.newListContainer input:focus{
+    border-color: var(--secondary-color);
+    border-width: 1px;
+    border-right: none;
+}
+
+.newListContainer button{
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    padding: .6rem ;
+    border: 2px solid var(--accent-color);
+    border-left: none;
+    border-bottom-right-radius: .6rem;
+    border-top-right-radius: .6rem;
+}
+
+.newListContainer button:hover{
+    background-color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    border-left: none;
+}
+
+.newListErrorMessage{
+    margin: 0;
+    margin-left: 1.6rem;
+    color: var(--errorColor);
+    font-size: 1.2rem;
     font-weight: bold;
-    color: var(--accent-color);
 }
 
