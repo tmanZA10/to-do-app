@@ -1,8 +1,9 @@
 import styles from './LeftSideBar.module.css'
 import NavItem from "../navitem/NavItem.tsx";
-import {ChangeEvent, useEffect, useState} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import useAuth from '../../hooks/UseAuth.tsx'
-import {backendURL} from "../../AppVariables.ts";
+import { backendURL } from "../../AppVariables.ts";
+import { Form } from "react-router-dom";
 
 export type taskListType = {
   id: number;
@@ -114,7 +115,7 @@ function LeftSideBar() {
         <div>
           {errorMessage.length !==0 &&
               <p className={styles.newListErrorMessage}>{errorMessage}</p>}
-          <div className={styles.newListContainer}>
+          <Form className={styles.newListForm}>
             <input
               type="text"
               placeholder="New Task"
@@ -127,7 +128,7 @@ function LeftSideBar() {
             >
               Add
             </button>
-          </div>
+          </Form>
         </div>
       </div>
 

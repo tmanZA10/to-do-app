@@ -46,7 +46,7 @@ export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginF
         const userId:string = responseDate.userId!.toString()
         return {
             state: "success",
-            message: "Signed up successfully.",
+            message: "Logged in successfully.",
             id,
             accessToken,
             userId

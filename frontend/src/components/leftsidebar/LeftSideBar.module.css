@@ -74,14 +74,14 @@
     border-radius: 8px;
 }
 
-.newListContainer{
+.newListForm{
     /*display: flex;*/
     width: 100%;
     margin-left: 8px;
 
 }
 
-.newListContainer input{
+.newListForm input{
     width: 68%;
     padding: .6rem ;
     border: 2px solid var(--accent-color);
@@ -90,13 +90,13 @@
     border-bottom-left-radius: .6rem;
 }
 
-.newListContainer input:focus{
+.newListForm input:focus{
     border-color: var(--secondary-color);
     border-width: 1px;
     border-right: none;
 }
 
-.newListContainer button{
+.newListForm button{
     background-color: var(--accent-color);
     color: var(--primary-color);
     padding: .6rem ;
@@ -106,7 +106,7 @@
     border-top-right-radius: .6rem;
 }
 
-.newListContainer button:hover{
+.newListForm button:hover{
     background-color: var(--secondary-color);
     border: 2px solid var(--secondary-color);
     border-left: none;

@@ -31,3 +31,16 @@
     font-size: 1.2rem;
 }
 
+.taskAction{
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    fill: var(--accent-color);
+    padding: 3px;
+}
+
+.taskAction:hover{
+    background-color: var(--accent-color);
+    fill: var(--primary-color);
+}
+

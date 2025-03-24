@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {backendURL} from "../../AppVariables.ts";
 import useAuth from "../../hooks/UseAuth.tsx";
 import {taskType} from "../task/Task.tsx";
+import AddNewTask from "../addnewtask/AddNewTask.tsx";
 
 function TaskList() {
 
@@ -41,29 +42,39 @@ function TaskList() {
   }, [listId])
 
   return (
-    <div>
-      <div className={styles.header}>
-        <h4>Tasks</h4>
-        <select name="sort" id="">
-          <option value="sort">Sort</option>
-          <option value="time">Time</option>
-          <option value="priority">Priority</option>
-        </select>
+    <>
+      <AddNewTask />
+      <div>
+        <div className={styles.header}>
+          <h4>Tasks</h4>
+          <select name="sort" id="">
+            <option value="sort">Sort</option>
+            <option value="time">Time</option>
+            <option value="priority">Priority</option>
+          </select>
+        </div>
+        <>
+          {
+            tasks.length ?
+              <ul className={styles.list}>
+                {
+                  tasks.map(
+                    ((task, i) =>
+                        <Task
+                          key={task.id}
+                          task={task}
+                          index={i}
+                          setTasks={setTasks}
+                        />
+                    )
+                  )
+                }
+              </ul> :
+              <p>No tasks found.</p>
+          }
+        </>
       </div>
-      <>
-        {
-          tasks.length ?
-            <ul className={styles.list}>
-              {
-                tasks.map(
-                  (task => <Task key={task.id} task={task} />)
-                )
-              }
-            </ul> :
-            <p>No tasks found.</p>
-        }
-      </>
-    </div>
+    </>
   );
 }
 
