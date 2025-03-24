@@ -35,8 +35,8 @@ public class TaskListService {
         return repo.findAllByUserId(userId);
     }
 
-    public boolean existsByIdAndUserId(long id, UUID userId) {
-        return !repo.existsByIdAndUserId(id, userId);
+    public boolean taskListExists(long id, UUID userId) {
+        return repo.existsByIdAndUserId(id, userId);
     }
 
     public void deleteTaskList(long taskListId) {

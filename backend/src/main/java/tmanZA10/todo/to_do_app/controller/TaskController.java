@@ -30,7 +30,7 @@ public class TaskController {
     @PostMapping("/new")
     public ResponseEntity<?> addTask (@RequestBody NewTaskRequestDTO request) {
 
-        if (taskListService.existsByIdAndUserId(
+        if (!taskListService.taskListExists(
                 request.getTaskListId(), request.getUserId()
         )) return invalidTaskList();
 
@@ -55,10 +55,55 @@ public class TaskController {
 
     @GetMapping("/all/{userId}/{listId}")
     public ResponseEntity<?> getTaskList (@PathVariable UUID userId, @PathVariable long listId) {
-        if (taskListService.existsByIdAndUserId(listId, userId)){
+        if (!taskListService.taskListExists(listId, userId)){
             return invalidTaskList();
         }
         List<Task> tasks = taskService.getTasksByListId(listId);
+        return ResponseEntity
+                .ok()
+                .body(
+                        TasksByIdResponseDTO.create(
+                                tasks, userId, listId
+                        )
+                );
+    }
+
+    @PatchMapping("/complete/{userId}/{listId}/{taskId}")
+    public ResponseEntity<?> completeTask(
+            @PathVariable UUID userId,
+            @PathVariable long listId,
+            @PathVariable long taskId
+    ){
+        if (!taskListService.taskListExists(listId, userId)){
+            return invalidTaskList();
+        }
+
+        if (!taskService.taskExists(taskId, listId)){
+            return invalidTask();
+        }
+        Task task = taskService.completeTask(taskId);
+        return ResponseEntity
+                .ok()
+                .body(TaskDTO.create(task));
+    }
+
+    @DeleteMapping("/delete/{userId}/{listId}/{taskId}")
+    public ResponseEntity<?> deleteTask(
+            @PathVariable UUID userId,
+            @PathVariable long listId,
+            @PathVariable long taskId
+    ){
+        if (!taskListService.taskListExists(listId, userId)){
+            return invalidTaskList();
+        }
+
+        if (!taskService.taskExists(taskId, listId)){
+            return invalidTask();
+        }
+
+        taskService.deleteTask(taskId);
+        List<Task> tasks = taskService.getTasksByListId(listId);
+
         return ResponseEntity
                 .ok()
                 .body(
@@ -74,5 +119,13 @@ public class TaskController {
                 .body(new BadRequestDTO(
                         HttpStatus.NOT_FOUND,
                         "TaskList does not exist"));
+    }
+
+    private ResponseEntity<BadRequestDTO> invalidTask(){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new BadRequestDTO(
+                        HttpStatus.NOT_FOUND,
+                        "Task does not exist"));
     }
 }

@@ -39,4 +39,18 @@ public class TaskService {
     public List<Task> getTasksByListId(long listId) {
         return taskRepository.findAllByTaskListId(listId);
     }
+
+    public boolean taskExists(long taskId, long listId) {
+        return taskRepository.existsByIdAndTaskListId(taskId, listId);
+    }
+
+    public Task completeTask(long taskId){
+        Task task = taskRepository.findById(taskId).get();
+        task.setCompleted(true);
+        return taskRepository.save(task);
+    }
+
+    public void deleteTask(long taskId){
+        taskRepository.deleteById(taskId);
+    }
 }

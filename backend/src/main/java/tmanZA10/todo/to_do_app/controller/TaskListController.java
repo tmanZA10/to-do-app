@@ -73,7 +73,7 @@ public class TaskListController {
             @PathVariable UUID userId,
             @PathVariable long taskListId
     ) {
-        if (taskListService.existsByIdAndUserId(taskListId, userId)){
+        if (!taskListService.taskListExists(taskListId, userId)){
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(

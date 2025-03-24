@@ -10,4 +10,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByTaskListId(long id);
+    boolean existsByIdAndTaskListId(long id, long taskListId);
 }
