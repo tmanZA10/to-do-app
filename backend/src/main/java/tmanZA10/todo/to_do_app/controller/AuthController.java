@@ -162,4 +162,34 @@ public class AuthController {
         );
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(
+            HttpServletResponse response
+    ){
+        Cookie tokenCookie, userIdCookie, userEmailCookie;
+
+        tokenCookie = new Cookie(refreshCookieName, "");
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(securityConfig.isSecureCookies());
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(0);
+
+        userIdCookie = new Cookie(userIdCookieName, "");
+        userIdCookie.setHttpOnly(true);
+        userIdCookie.setSecure(securityConfig.isSecureCookies());
+        userIdCookie.setPath("/");
+        userIdCookie.setMaxAge(0);
+
+        userEmailCookie = new Cookie(emailCookieName, "");
+        userEmailCookie.setHttpOnly(true);
+        userEmailCookie.setSecure(securityConfig.isSecureCookies());
+        userEmailCookie.setPath("/");
+        userEmailCookie.setMaxAge(0);
+
+        response.addCookie(tokenCookie);
+        response.addCookie(userIdCookie);
+        response.addCookie(userEmailCookie);
+
+        return ResponseEntity.ok().build();
+    }
 }
