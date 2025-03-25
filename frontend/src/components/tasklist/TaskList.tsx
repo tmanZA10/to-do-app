@@ -1,11 +1,18 @@
 import Task from "../task/Task.tsx";
 import styles from "./TaskList.module.css";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
-import {useEffect, useState} from "react";
+import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
 import {backendURL} from "../../AppVariables.ts";
 import useAuth from "../../hooks/UseAuth.tsx";
 import {taskType} from "../task/Task.tsx";
 import AddNewTask from "../addnewtask/AddNewTask.tsx";
+
+type tasksContextType = {
+  tasks: taskType[],
+  setTasks: Dispatch<SetStateAction<taskType[]>>
+}
+
+export const TasksContext = createContext<tasksContextType | undefined>(undefined)
 
 function TaskList() {
 
@@ -43,7 +50,9 @@ function TaskList() {
 
   return (
     <>
-      <AddNewTask />
+      <TasksContext.Provider value={{tasks, setTasks}}>
+        <AddNewTask />
+      </TasksContext.Provider>
       <div>
         <div className={styles.header}>
           <h4>Tasks</h4>

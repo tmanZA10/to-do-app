@@ -1,0 +1,80 @@
+.formContainer {
+    /*background-color: lightblue;*/
+    display: flex;
+    justify-content: center;
+}
+
+.formContainer form{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+}
+
+.inputContainer{
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+
+.inputContainer label{
+    margin-left: .6rem;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.inputContainer input{
+    font-size: 1.6rem;
+    padding: .8rem 1.2rem;
+    border: 2px solid var(--accent-color);
+    border-radius: 1.2rem;
+}
+
+.radioContainer{
+    display: flex;
+    flex-direction: column;
+    color: var(--secondary-color);
+}
+
+.radioButton{
+    margin-left: .8rem;
+    font-weight: 500;
+}
+
+.radioButton input{
+    margin-right: .6rem;
+}
+
+.priority{
+    font-weight: 900;
+}
+
+.submitButton{
+    border: none;
+    background-color: var(--accent-color);
+    height: 4rem;
+    color: var(--primary-color);
+    border-radius: 4rem;
+    margin-top: 1rem;
+    font-weight: 900;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.submitButton:hover{
+    opacity: 0.9;
+}
+
+.submitButton:disabled{
+    opacity: 0.2;
+}
+
+.errorMessage{
+    color: var(--errorColor);
+    background-color: var(--errorBackgroundColor);
+    margin: 0;
+    font-size: 1.4rem;
+    padding: .8rem .6rem;
+    font-weight: 700;
+}
+
