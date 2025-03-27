@@ -1,205 +1,143 @@
 import styles from './LoginForm.module.css'
-import {ActionFunctionArgs, Form, useActionData, useLocation, useNavigate} from "react-router-dom";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
-import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
+import { Form, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { minPassLength, redirectionDelay } from "../../AppVariables.ts";
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
 import useAuth from "../../hooks/UseAuth.tsx";
+import useAuthAxios from "../../hooks/UseAuthAxios.tsx";
+import axios from "axios";
 
-type LoginFormState = {
-    state: "success" | "error",
-    message: string,
-    id: number,
-    accessToken: string | null,
-    userId: string | null,
-}
-
-export async function LogInAction({ request }:ActionFunctionArgs):Promise<LoginFormState> {
-    const formData = await request.formData()
-
-    const email = formData.get('email')!.toString()
-    const password = formData.get('password')!.toString()
-
-    const id = Math.round(Math.random() * 1000000000)
-
-    const data = {
-        email,
-        password,
-    }
-
-    // console.log(data)
-
-    const response = await fetch(
-        `${backendURL}/auth/login`,
-        {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data)
-        }
-    )
-
-    if (response.ok) {
-        const responseDate = await response.json()
-        const accessToken:string = responseDate.accessToken!.toString()
-        const userId:string = responseDate.userId!.toString()
-        return {
-            state: "success",
-            message: "Logged in successfully.",
-            id,
-            accessToken,
-            userId
-        }
-    }else {
-        let message: string;
-        if (response.status === 401) {
-            message = "Password Invalid."
-        }else if (response.status === 404) {
-            message = "Account does not exist."
-        }
-        else {
-            message = "Something went wrong."
-        }
-
-        return {
-            state: "error",
-            message,
-            id,
-            accessToken: null,
-            userId: null
-        }
-    }
-}
+type responseMessageType = ""
+  | "Logged in successfully."
+  | "Account does not exist."
+  | "Password Invalid."
+  | "Something went wrong."
 
 function LoginForm() {
 
-    const navigate = useNavigate();
-    const location = useLocation();
+  const api = useAuthAxios()
+  const { setAccessToken, setUserId, accessToken, userId } = useAuth()
+  const location = useLocation()
+  const navigate = useNavigate()
 
-    const [password, setPassword] = useState("")
-    const [passError, setPassError] = useState<string[] | null>(null);
-    const [buttonState, setButtonState] = useState(true)
-    const [loading, setLoading] = useState(false)
-    const response = useRef<LoginFormState | undefined>(undefined);
+  const [emailInput, setEmailInput] = useState("")
+  const [passwordInput, setPasswordInput] = useState("")
+  const [passError, setPassError] = useState("")
+  const [buttonState, setButtonState] = useState(true)
+  const [responseMessage, setResponseMessage] = useState<responseMessageType>("")
+  const [loading, setLoading] = useState(false)
+  const redirect = useRef<string>();
+  useEffect(() => {
+    redirect.current = location.state?.redirectPath || "/"
+  }, []);
 
-    const res = useActionData<LoginFormState>()
-    const { setAccessToken, setUserId } = useAuth()
-    const redirect = useRef<string>();
-
-    useEffect(() => {
-        redirect.current = location.state?.redirectPath || "../"
-    }, []);
-
-    useEffect(() => {
-        if (password ==="") {
-            setButtonState(true)
-            setPassError(null)
-            return
-        }
-        if (password.length < minPassLength){
-            setButtonState(true)
-            setPassError([
-                `Password must have at least ${minPassLength} characters.`
-            ])
-            return
-        }
-        if (!passwordRegex.test(password)){
-            setPassError(
-                [
-                    "Password must have contain:",
-                    "An uppercase letter.",
-                    "A lowercase letter.",
-                    "A number",
-                    "A special character (! @ # $ %)."
-                ]
-            )
-            setButtonState(true)
-            return
-        }
-        setPassError(null)
-        setButtonState(false)
-    }, [password]);
-
-    useEffect(() => {
-        if (res !== undefined){
-
-            if (res.state === "success"){
-                setAccessToken(res.accessToken!)
-                setUserId(res.userId!)
-                setLoading(false)
-                setTimeout(() => navigate(redirect.current!), redirectionDelay)
-            }else {
-                if (response.current === undefined){
-                    response.current = res
-                    setLoading(false)
-                    return
-                }
-                if (res.id !== response.current.id){
-                    response.current = res
-                    setLoading(false)
-                    return
-                }
-            }
-
-        }
-    });
-
-    function handlePasswordChange( { target }: ChangeEvent<HTMLInputElement>){
-        setPassword(target.value)
+  useEffect(() => {
+    if (passwordInput === "") {
+      setButtonState(true)
+      setPassError("")
+      return
     }
 
-    function buttonClick(){
-        setLoading(true)
+    if (passwordInput.trim().length < minPassLength) {
+      setButtonState(true)
+      setPassError("Password must be at least 8 characters")
+      return
     }
+    setButtonState(false)
+    setPassError("")
+  }, [passwordInput]);
 
-    return (
-        <Form method="post" action="../login" className={styles.form}>
-            {res &&
-                <p className={
-                    res.state === "success" ? styles.responseSuccess : styles.responseError
-                }>{res.message}</p>
+  useEffect(() => {
+    if (userId && accessToken){
+      setTimeout(() => navigate(redirect.current!), redirectionDelay)
+    }
+  }, [accessToken, userId]);
 
-            }
-            <div className={styles.inputContainer}>
-                <label htmlFor="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    autoFocus={true}
-                />
-            </div>
-            <div className={styles.inputContainer}>
-                <label htmlFor="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    required
-                />
-                { passError &&
-                    <div>
-                        {passError.map(
-                            (m, i)=> <p className={styles.inputErrorMessage} key={i}>{m}</p>
-                        )}
-                    </div> }
-            </div>
+  async function handleSubmit(){
+    setLoading(true)
+    try{
+      const response = await api.post(
+        "/login", {
+          email: emailInput,
+          password: passwordInput,
+        },
+        {
+          withCredentials: true
+        }
+      )
+      setLoading(false)
+      setAccessToken("haha")
+      setAccessToken(response.data.accessToken)
+      setUserId(response.data.userId)
+      setResponseMessage("Logged in successfully.")
+    }catch (err){
+      setLoading(false)
+      if (axios.isAxiosError(err)) {
+        if (err.status === 400 || err.status === 401) {
+          setResponseMessage("Password Invalid.")
+        }
+        if (err.status === 404) {
+          setResponseMessage("Account does not exist.")
+        }
+      }else{
+        setResponseMessage("Something went wrong.")
+      }
+    }
+  }
 
-            <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={buttonState}
-                onClick={buttonClick}
-            >
-                Log In
-            </button>
-            <LoadingSpinner display={loading} />
-        </Form>
-    );
+  function messageClassAllocator(){
+    if (
+      responseMessage === ""
+      || responseMessage === "Logged in successfully."
+    ) {
+      return styles.responseSuccess
+    }
+    return styles.responseError
+  }
+
+  return (
+    <Form className={styles.form} onSubmit={handleSubmit}>
+      {
+        responseMessage !== "" ?
+          <p className={messageClassAllocator()}>{responseMessage}</p> :
+          null
+      }
+      <div className={styles.inputContainer}>
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          required
+          autoFocus={true}
+          value={emailInput}
+          onChange={(e) => setEmailInput(e.target.value)}
+        />
+      </div>
+      <div className={styles.inputContainer}>
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          required
+          value={passwordInput}
+          onChange={(e) => setPasswordInput(e.target.value)}
+        />
+        {
+          passError !== "" ?
+            <p className={styles.inputErrorMessage}>{passError}</p> :
+            null
+        }
+      </div>
+      <button
+        type="submit"
+        className={styles.submitButton}
+        disabled={buttonState}
+      >
+        Log In
+      </button>
+      <LoadingSpinner display={loading} />
+    </Form>
+  );
 }
 
 export default LoginForm;

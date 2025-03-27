@@ -1,9 +1,12 @@
 import {Outlet} from "react-router-dom";
+import AuthAxiosProvider from "../context/AuthAxiosContext.tsx";
 
 
 function AuthLayout() {
   return (
-    <Outlet />
+    <AuthAxiosProvider>
+      <Outlet />
+    </AuthAxiosProvider>
   );
 }
 

@@ -1,118 +1,47 @@
-import {ActionFunctionArgs, Form, useActionData, useNavigate} from 'react-router-dom'
+import { Form, useNavigate} from 'react-router-dom'
 import styles from './SignUpForm.module.css'
-import {ChangeEvent, useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import LoadingSpinner from "../loadingspinner/LoadingSpinner.tsx";
-import {passwordRegex, minPassLength, backendURL, redirectionDelay} from "../../AppVariables.ts";
+import {passwordRegex, minPassLength, redirectionDelay} from "../../AppVariables.ts";
+import useAuthAxios from "../../hooks/UseAuthAxios.tsx";
+import axios from "axios";
 
-export type SignUpFormState = {
-  state: "success" | "error",
-  message: string,
-  id: number
-}
+type responseMessageType = ""
+  | "Signed up successfully."
+  | "Account already exists."
+  | "Something went wrong."
+  | "Password is Invalid."
 
-export async function SignUpFormAction({ request }:ActionFunctionArgs):Promise<SignUpFormState>{
-
-  const formData = await request.formData()
-
-  const name = formData.get('name')!.toString()
-  const email = formData.get("email")!.toString()
-  const password = formData.get("password")!.toString()
-  const confirmPassword = formData.get("passMatch")!.toString()
-
-  const id = Math.round(Math.random() * 1000000000)
-
-  const data = {
-    name,
-    email,
-    password,
-    confirmPassword
-  }
-
-  // console.log(data);
-
-  const response = await fetch(
-      `${backendURL}/auth/signup`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-      }
-  )
-
-  if (response.ok) {
-    return {
-      state: "success",
-      message: "Signed up successfully.",
-      id
-    }
-  }else {
-    let message: string;
-    if (response.status === 409) {
-      message = "Account already exists."
-    }
-    else {
-      message = "Something went wrong."
-    }
-
-    return {
-      state: "error",
-      message,
-      id
-    }
-  }
-}
 
 function SignUpForm() {
 
+  const api = useAuthAxios()
   const navigate = useNavigate()
 
-  const [password, setPassword] = useState("")
-  const [passwordMatch, setPasswordMatch] = useState("")
-
-  const [passError, setPassError] = useState<string[] | null>(null)
-  const [passErrorMatch, setPassErrorMatch] = useState<string | null>()
-
+  const [nameInput, setNameInput] = useState("")
+  const [emailInput, setEmailInput] = useState("")
+  const [passwordInput, setPasswordInput] = useState("")
+  const [cPasswordInput, setCPasswordInput] = useState("")
   const [buttonState, setButtonState] = useState(true)
-
-  const [loading, setLoading] = useState(false);
-
-  const [responseData, setResponseData] = useState<SignUpFormState | undefined>(undefined)
-
-
-  const res = useActionData<SignUpFormState>();
-
-  useEffect(()=>{
-    
-    if (password === "" || passwordMatch === "") {
-      setButtonState(true)
-      return
-    }
-  
-    
-    if (password.length < minPassLength || passwordMatch.length < minPassLength) {
-      setButtonState(true)
-      return
-    }
-
-    if (password !== passwordMatch){
-      setPassErrorMatch("Password do not match.")
-      setButtonState(true)
-      return
-    }else{
-      setPassErrorMatch(null)
-    }
-
-    setButtonState(false)
-    
-  }, [password, passwordMatch])
+  const [passError, setPassError] = useState<string[]>([])
+  const [cPassError, setCPassError] = useState("")
+  const [nameError, setNameError] = useState("")
+  const [responseMessage, setResponseMessage] = useState<responseMessageType>("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (password !== ""){
-      if (password.length < minPassLength) {
+    if (nameInput.length !==0 && nameInput.trim() === ""){
+      setNameError("Name cannot be blank.")
+    }else {
+      setNameError("")
+    }
+  }, [nameInput]);
+
+  useEffect(() => {
+    if (passwordInput !== ""){
+      if (passwordInput.length < minPassLength){
         setPassError([`Password must have at least ${minPassLength} characters.`])
-      }else if(!passwordRegex.test(password)){
+      }else if(!passwordRegex.test(passwordInput)){
         setPassError([
           "Password must have contain:",
           "An uppercase letter.",
@@ -120,135 +49,149 @@ function SignUpForm() {
           "A number",
           "A special character (! @ # $ %)."
         ])
-      }else{
-        setPassError(null)
+      }
+      else {
+        setPassError([])
       }
     }else{
-      setPassError(null)
+      setPassError([])
     }
-  }, [password])
-
-  useEffect(()=>{
-    if(passwordMatch !== ""){
-      if (passwordMatch !== password){
-        setPassErrorMatch("Password do not match.")
-      }else{
-        setPassErrorMatch(null)
-      }
-    }else{
-      setPassErrorMatch(null)
-    }
-  }, [passwordMatch])
+  }, [passwordInput]);
 
   useEffect(() => {
-    if (res !== undefined){
-
-      if (res.state === "success"){
-        setLoading(false)
-        setTimeout(() => navigate("../login"), redirectionDelay)
-      }else {
-        if (responseData === undefined){
-          setResponseData(res)
-          setLoading(false)
-          return
-        }
-        if (res.id !== responseData.id){
-          setResponseData(res)
-          setLoading(false)
-          return
-        }
+    if (cPasswordInput !==""){
+      if (passwordInput !== cPasswordInput){
+        setCPassError("Password do not match.")
+      }else{
+        setCPassError("")
       }
-
+    }else {
+      setCPassError("")
     }
-  });
+  }, [cPasswordInput]);
 
-  function buttonClick(){
+  useEffect(() => {
+    if (passwordInput === "" || cPasswordInput === "") {
+      setButtonState(true)
+      return
+    }
+
+    if (passwordInput.length < minPassLength || cPasswordInput.length < minPassLength) {
+      setButtonState(true)
+      return
+    }
+
+    if (passwordInput !== cPasswordInput){
+      setCPassError("Password do not match.")
+      setButtonState(true)
+      return
+    }else{
+      setCPassError("")
+    }
+
+    setButtonState(false)
+  }, [passwordInput, cPasswordInput]);
+
+  async function handleSubmit() {
     setLoading(true)
+    try{
+      await api.post("/signup", {
+        name: nameInput.trim(),
+        email: emailInput,
+        password: passwordInput,
+        confirmPassword: cPasswordInput,
+      })
+      setLoading(false)
+      setResponseMessage("Signed up successfully.")
+      setTimeout(() => navigate("../login"), redirectionDelay)
+    }catch(err){
+      setLoading(false)
+      if (axios.isAxiosError(err)){
+        if (err.status === 400 ){
+          setResponseMessage("Password is Invalid.")
+        }else if(err.status === 409 ){
+          setResponseMessage("Account already exists.")
+        }else {
+          setResponseMessage("Something went wrong.")
+        }
+
+      }else {
+        setResponseMessage("Something went wrong.")
+      }
+    }
   }
 
-  function handlePasswordChange({ target }: ChangeEvent<HTMLInputElement>){
-    setPassword(target.value)
-  }
-
-  function handlePasswordMatchChange({ target }: ChangeEvent<HTMLInputElement>){
-    setPasswordMatch(target.value)
+  function responseClassAllocator(){
+    if (responseMessage === "Signed up successfully.") return styles.responseSuccess
+    return styles.responseError
   }
 
   return (
-    <Form method='post' action='../signup' className={styles.form}>
-      {res &&
-          <p className={
-            res.state === "success" ? styles.responseSuccess : styles.responseError
-          }>{res.message}</p>
-
+    <Form className={styles.form} onSubmit={handleSubmit}>
+      {
+        responseMessage !== "" ? <p className={responseClassAllocator()}></p> : null
       }
       <div className={styles.inputContainer}>
-        <label htmlFor="name">Name:</label>
-        <input 
-          type="text" 
-          id='name'
-          name='name'
-          minLength={2}
-					required
+        <label htmlFor="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          required
+          autoFocus={true}
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
         />
+        {
+          nameError.length ? <p className={styles.inputErrorMessage}>{nameError}</p> : null
+        }
       </div>
-
       <div className={styles.inputContainer}>
-        <label htmlFor="email">Email:</label>
-        <input 
-          type="email" 
-          id='email'
-          name='email'
-					required
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          required
+          value={emailInput}
+          onChange={(e) => setEmailInput(e.target.value)}
         />
       </div>
-
       <div className={styles.inputContainer}>
-        <label htmlFor="password">Password:</label>
-        <input 
-          type="password" 
-          id='password'
-          name='password'
-          minLength={minPassLength}
-          value={password}
-          onChange={handlePasswordChange}
-					required
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          required
+          value={passwordInput}
+          onChange={(e) => setPasswordInput(e.target.value)}
         />
-        { passError && 
-        <div>
-          {passError.map(
-            (m, i)=> <p className={styles.inputErrorMessage} key={i}>{m}</p>
-          )}
-        </div> }
+        {
+          passError.length ?
+            passError.map((m,i) =>
+              <p key={i} className={styles.inputErrorMessage}>{m}</p>
+            ):
+            null
+        }
       </div>
-      
       <div className={styles.inputContainer}>
-        <label htmlFor="passMatch">Confirm Password:</label>
-        <input 
-          type="password" 
-          id='passMatch'
-          name='passMatch'
-          minLength={minPassLength}
-          value={passwordMatch}
-          onChange={handlePasswordMatchChange}
-					required
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          required
+          value={cPasswordInput}
+          onChange={(e) => setCPasswordInput(e.target.value)}
         />
-        <div>
-          <p className={styles.inputErrorMessage}>{passErrorMatch}</p>
-        </div>
       </div>
-
+      {
+        cPassError.length ? <p className={styles.inputErrorMessage}>{cPassError}</p> : null
+      }
       <button
-          type='submit' 
-          className={styles.submitButton}
-          disabled={buttonState}
-          onClick={buttonClick}
-        >
-          Sign Up
-      </button>
-
+        type="submit"
+        className={styles.submitButton}
+        disabled={buttonState}
+      >Sign Up</button>
       <LoadingSpinner display={loading} />
-  	</Form>
+    </Form>
   )
 }
 
