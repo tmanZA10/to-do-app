@@ -8,6 +8,7 @@ import AuthLayout from "./layouts/AuthLayout.tsx";
 import AutoLogin from "./pages/autologin/AutoLogin.tsx";
 import MainPage from "./pages/mainpage/MainPage.tsx";
 import CurrentListProvider from "./context/CurrentListContext.tsx";
+import AuthAxiosProvider from "./context/AuthAxiosContext.tsx";
 
 const router = createBrowserRouter(
   [
@@ -47,9 +48,11 @@ function App() {
   return (
 
       <AuthProvider>
+        <AuthAxiosProvider>
           <CurrentListProvider>
             <RouterProvider router={router} />
           </CurrentListProvider>
+        </AuthAxiosProvider>
       </AuthProvider>
   )
 }
