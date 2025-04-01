@@ -2,10 +2,10 @@ import Task from "../task/Task.tsx";
 import styles from "./TaskList.module.css";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
 import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
-import {backendURL} from "../../AppVariables.ts";
 import useAuth from "../../hooks/UseAuth.tsx";
 import {taskType} from "../task/Task.tsx";
 import AddNewTask from "../addnewtask/AddNewTask.tsx";
+import useMainAxios from "../../hooks/UseMainAxios.tsx";
 
 type tasksContextType = {
   tasks: taskType[],
@@ -16,35 +16,32 @@ export const TasksContext = createContext<tasksContextType | undefined>(undefine
 
 function TaskList() {
 
+  const mainAxios = useMainAxios()
+
   const { listId } = useCurrentList()
-  const { userId, accessToken } = useAuth()
+  const { userId } = useAuth()
 
   const [tasks, setTasks] = useState<taskType[]>([])
 
   useEffect(()=>{
-    if (listId !== -1){
-      fetch(
-        `${backendURL}/api/task/all/${userId}/${listId}`,
-        {
-          method: "GET",
-          headers:{
-            authorization: `Bearer ${accessToken}`
-          }
-        }
-      ).then(res => res.json())
-        .then(data =>{
-          const newTasks: taskType[] = []
-          for (const item of data.tasks){
-            newTasks.push({
-              id: item.id,
-              task: item.task,
-              priority: item.priority,
-              dueDate: new Date(`${item.dueDate}T${item.dueTime}`),
-              completed: item.completed
-            })
+    async function getData(){
+      const response = await mainAxios.get(
+        `/task/all/${userId}/${listId}`
+      )
+      const newTasks: taskType[] = []
+      for (const item of response.data.tasks){
+        newTasks.push({
+          id: item.id,
+          task: item.task,
+          priority: item.priority,
+          dueDate: new Date(`${item.dueDate}T${item.dueTime}`),
+          completed: item.completed
+        })
           }
           setTasks(newTasks)
-        })
+    }
+    if (listId !== -1){
+      getData()
     }
   }, [listId])
 

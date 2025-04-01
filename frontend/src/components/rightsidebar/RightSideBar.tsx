@@ -2,21 +2,25 @@ import styles from './RightSideBar.module.css'
 import Calendar from "react-calendar";
 import './Calendar.css'
 import useCurrentDate from "../../hooks/UseCurrentDate.tsx";
-import {backendURL} from "../../AppVariables.ts";
 import {useNavigate} from "react-router-dom";
 import useAuth from "../../hooks/UseAuth.tsx";
+import useAuthAxios from "../../hooks/UseAuthAxios.tsx";
 
 function RightSideBar() {
+
+  const authAxios = useAuthAxios()
 
   const { currentDate, setCurrentDate } =useCurrentDate()!;
   const navigate = useNavigate();
   const { setAccessToken, setUserId } = useAuth()
 
-  function logout(){
-    fetch(`${backendURL}/auth/logout`, {
-      method: "GET",
-      credentials: "include",
-    })
+  async function logout(){
+    await authAxios.get(
+      "/logout",
+      {
+        withCredentials: true
+      }
+    )
     navigate("../auth/login")
     setAccessToken("")
     setUserId("")

@@ -1,11 +1,11 @@
 import {Form} from "react-router-dom";
 import styles from "./NewTaskForm.module.css";
 import {ChangeEvent, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {backendURL} from "../../AppVariables.ts";
 import useAuth from "../../hooks/UseAuth.tsx";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
 import {TasksContext} from "../tasklist/TaskList.tsx";
 import {taskType} from "../task/Task.tsx";
+import useMainAxios from "../../hooks/UseMainAxios.tsx";
 
 type propTypes = {
   initialInput: string,
@@ -16,7 +16,9 @@ type propTypes = {
 function NewTaskForm({ initialInput, setFormActive, setAddTaskInput }: propTypes) {
   const now = new Date();
 
-  const { accessToken, userId } = useAuth();
+  const mainAxios = useMainAxios()
+
+  const { userId } = useAuth();
   const { listId } = useCurrentList()
   const { setTasks } = useContext(TasksContext)!
 
@@ -53,7 +55,7 @@ function NewTaskForm({ initialInput, setFormActive, setAddTaskInput }: propTypes
   }
 
   async function handleSubmit(){
-    const requestBody = {
+    const requestData = {
       task: taskInput,
       taskListId: listId,
       userId,
@@ -62,16 +64,8 @@ function NewTaskForm({ initialInput, setFormActive, setAddTaskInput }: propTypes
       dueTime: `${dueTime}:00`,
     }
 
-    const response = await fetch(
-      `${backendURL}/api/task/new`,
-      {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        }
-      }
+    const response = await mainAxios.post(
+      "task/new", requestData
     )
 
     if (response.status === 409){
@@ -80,7 +74,7 @@ function NewTaskForm({ initialInput, setFormActive, setAddTaskInput }: propTypes
     }
 
     if (response.status > 199 && response.status < 300){
-      const data = await response.json()
+      const data = response.data
       const newTask: taskType = {
         id: data.id,
         task: data.task,

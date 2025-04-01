@@ -1,9 +1,9 @@
 import styles from './Task.module.css'
 import { completeTask, deleteTask } from "./Svgs.tsx";
 import useAuth from "../../hooks/UseAuth.tsx";
-import {backendURL} from "../../AppVariables.ts";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
 import {Dispatch, SetStateAction} from "react";
+import useMainAxios from "../../hooks/UseMainAxios.tsx";
 
 export type taskType ={
   id:number,
@@ -39,53 +39,34 @@ function formatTime(date: Date): string {
 
 function Task({ task, index, setTasks }: propTypes) {
 
-  const { accessToken, userId } = useAuth()
+  const mainAxios = useMainAxios()
+
+  const { userId } = useAuth()
   const { listId } = useCurrentList()
 
-  function taskAction(){
+  async function taskAction(){
     if (task.completed){
-      // console.log("delete clicked")
-      fetch(
-        `${backendURL}/api/task/delete/${userId}/${listId}/${task.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }
+      const response = await mainAxios.delete(
+        `/task/delete/${userId}/${listId}/${task.id}`
       )
-        .then(res => res.json())
-        .then(_ => {
-          setTasks(t => {
-            t.splice(index, 1)
-            return [...t]
-          })
+      if (response.status === 200){
+        setTasks(t =>{
+          t.splice(index, 1)
+          return [...t]
         })
+      }
     }else {
-      // console.log("complete clicked")
-      fetch(
-        `${backendURL}/api/task/complete/${userId}/${listId}/${task.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }
+      const response = await mainAxios.patch(
+        `/task/complete/${userId}/${listId}/${task.id}`
       )
-        .then(res => res.json())
-        .then(data => {
-          const updatedTask:taskType = {
-            id: data.id,
-            task: data.task,
-            priority: data.priority,
-            dueDate: new Date(`${data.dueDate}T${data.dueTime}`),
-            completed: data.completed
-          }
-          setTasks(t =>{
-            t[index] = updatedTask
+      if (response.status === 200){
+        setTasks(
+          t => {
+            t[index].completed = response.data.completed
             return [...t]
-          })
-        })
+          }
+        )
+      }
     }
   }
   return (

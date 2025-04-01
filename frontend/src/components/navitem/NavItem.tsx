@@ -3,8 +3,8 @@ import { Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
 import useAuth from "../../hooks/UseAuth.tsx";
-import {backendURL} from "../../AppVariables.ts";
 import {taskListType} from "../leftsidebar/LeftSideBar.tsx";
+import useMainAxios from "../../hooks/UseMainAxios.tsx";
 
 type propTypes = {
   listName: string;
@@ -16,7 +16,8 @@ function NavItem({ listName, navItemId, setTaskList }:propTypes) {
 
   const params = useParams()
   const {listId, setListId} = useCurrentList()
-  const { userId, accessToken } = useAuth()
+  const { userId } = useAuth()
+  const mainAxios = useMainAxios()
 
   useEffect(() => {
     if (params.list === listName){
@@ -35,28 +36,20 @@ function NavItem({ listName, navItemId, setTaskList }:propTypes) {
     setListId(navItemId)
   }
 
-  function handleDelete(){
-    fetch(
-      `${backendURL}/api/tasklist/delete/${userId}/${navItemId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${accessToken}`
+  async function handleDelete(){
+    const response = await mainAxios.delete(
+      `/tasklist/delete/${userId}/${navItemId}`
+    )
+    const newTaskList: taskListType[] = []
+    for (const item of response.data.taskLists){
+      newTaskList.push(
+        {
+          id: item.id,
+          name: item.listName
         }
-      }
-    ).then(res => res.json())
-      .then(data =>{
-        const newTaskList:taskListType[] = []
-        for (const item of data.taskLists){
-          newTaskList.push(
-            {
-              id: item.id,
-              name: item.listName
-            }
-          )
-        }
-        setTaskList(newTaskList)
-      })
+      )
+    }
+    setTaskList(newTaskList)
   }
 
   return (

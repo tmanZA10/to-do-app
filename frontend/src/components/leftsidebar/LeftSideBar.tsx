@@ -2,8 +2,8 @@ import styles from './LeftSideBar.module.css'
 import NavItem from "../navitem/NavItem.tsx";
 import { ChangeEvent, useEffect, useState } from "react";
 import useAuth from '../../hooks/UseAuth.tsx'
-import { backendURL } from "../../AppVariables.ts";
 import { Form } from "react-router-dom";
+import useMainAxios from "../../hooks/UseMainAxios.tsx";
 
 export type taskListType = {
   id: number;
@@ -12,33 +12,29 @@ export type taskListType = {
 
 function LeftSideBar() {
 
-  const { accessToken, userId } = useAuth()
+  const { userId } = useAuth()
+  const mainAxios = useMainAxios()
 
   const [taskList, setTaskList] = useState<taskListType[]>([])
   const [errorMessage, setErrorMessage] = useState("")
   const [newTaskInput, setNewTaskInput] = useState("")
 
   useEffect(() => {
-    fetch(
-      `${backendURL}/api/tasklist/all/${userId}`,
-      {
-        method: "GET",
-        headers:{
-          // contentType: "application/json",
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    )
-      .then(res => res.json())
-      .then(data => {
-        for (const item of data.taskLists){
-          taskList.push({
+    async function getData(){
+      const response = await mainAxios.get(
+        `/tasklist/all/${userId}`
+      )
+      for (const item of response.data.taskLists){
+        taskList.push(
+          {
             id: item.id,
-            name: item.listName,
-          })
-        }
-        setTaskList([...taskList])
-      })
+            name: item.listName
+          }
+        )
+      }
+      setTaskList([...taskList])
+    }
+    getData()
   },[])
 
   useEffect(() => {
@@ -51,7 +47,7 @@ function LeftSideBar() {
     setNewTaskInput(target.value)
   }
 
-  function handleSubmit(){
+  async function handleSubmit(){
     if (newTaskInput === ""){
       setErrorMessage("New task is empty.")
       return
@@ -68,29 +64,21 @@ function LeftSideBar() {
       }
     }
 
-    fetch(
-      `${backendURL}/api/tasklist/new`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({userId, listName: newTaskInput})
-      }
+    const response = await mainAxios.post(
+      "/tasklist/new",
+      { userId, listName: newTaskInput },
     )
-      .then(res => res.json())
-      .then(data => {
-        const newList: taskListType[] = []
-        for (const item of data.taskLists){
-          newList.push({
-            id: item.id,
-            name: item.listName,
-          })
+    const newList: taskListType[] = []
+    for (const item of response.data.taskLists){
+      newList.push(
+        {
+          id: item.id,
+          name: item.listName
         }
-        setTaskList(newList)
-        setNewTaskInput("")
-      })
+      )
+    }
+    setTaskList(newList)
+    setNewTaskInput("")
   }
 
   return (
@@ -115,7 +103,10 @@ function LeftSideBar() {
         <div>
           {errorMessage.length !==0 &&
               <p className={styles.newListErrorMessage}>{errorMessage}</p>}
-          <Form className={styles.newListForm}>
+          <Form
+            className={styles.newListForm}
+            onSubmit={handleSubmit}
+          >
             <input
               type="text"
               placeholder="New Task"
@@ -124,7 +115,6 @@ function LeftSideBar() {
             />
             <button
               type="submit"
-              onClick={handleSubmit}
             >
               Add
             </button>
