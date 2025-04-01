@@ -22,7 +22,11 @@ public class TaskList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "taskList")
+    @OneToMany(
+            mappedBy = "taskList",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true
+    )
     private List<Task> tasks;
 
     public TaskList() {

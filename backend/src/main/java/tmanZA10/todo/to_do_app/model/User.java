@@ -21,7 +21,11 @@ public class User {
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true
+    )
     private List<TaskList> tasks;
 
     public User() {
