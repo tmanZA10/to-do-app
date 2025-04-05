@@ -4,11 +4,11 @@ services:
     image: postgres:17.2
     container_name: todo_db
     environment:
-      POSTGRES_DB: to-do-db
+      POSTGRES_DB: todo-database
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5000:5432"
+      - "5432:5432"
 
   pgadmin:
     image: dpage/pgadmin4:8.4
@@ -17,4 +17,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: user@email.com
       PGADMIN_DEFAULT_PASSWORD: password
     ports:
-      - "8000:80"
+      - "65500:80"
+    depends_on:
+      - database

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${TODO_DB_URL}
+    username: ${TODO_DB_USERNAME}
+    password: ${TODO_DB_PASSWORD}
+
+security:
+  jwt:
+    issuer: ${TODO_JWT_ISSUER:todo-app}
+    access-exp-time: ${TODO_JWT_ACCESS_SECONDS:900}
+    refresh-exp-days: ${TODO_JWT_REFRESH_DAYS:7}
+  
+  hash-strength: ${PASSWORD_HASH_STRENGTH:15}
+  cors:
+    allow-credentials: true
+    allowed-origins: 
+      - ${FRONTEND_URL:"http://localhost:5173"}
+    mapping-pattern: "/**"
+  secure-cookies: ${TODO_SECURE_COOKIES:false}

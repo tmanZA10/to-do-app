@@ -7,4 +7,4 @@ spring:
       ddl-auto: update
 
   profiles:
-    active: dev
+    active: ${TODO_ACTIVE_ENV:dev}
