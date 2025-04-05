@@ -1,0 +1,42 @@
+services:
+  database:
+    image: postgres:17.2
+    container_name: todo-db
+    environment:
+      POSTGRES_DB: todo-database
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+#    image: todo-backend
+    container_name: todo-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  frontend:
+    build: 
+      context: ./frontend
+    container_name: todo-frontend
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+
+  pgadmin:
+    image: dpage/pgadmin4:8.4
+    container_name: pg_admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "65500:80"
+    depends_on:
+      - database
+      - backend
+      - frontend
