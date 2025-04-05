@@ -1,4 +1,4 @@
-
+version: '3'
 services:
   database:
     image: postgres:17.2
@@ -10,6 +10,16 @@ services:
     ports:
       - "5432:5432"
 
+  backend:
+    build:
+      context: .
+#    image: todo-backend
+    container_name: todo-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
   pgadmin:
     image: dpage/pgadmin4:8.4
     container_name: pg_admin
@@ -20,3 +30,4 @@ services:
       - "65500:80"
     depends_on:
       - database
+      - backend
