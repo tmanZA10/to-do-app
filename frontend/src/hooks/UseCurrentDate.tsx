@@ -3,7 +3,7 @@ import { CurrentDateContext } from "../context/CurrentDateContext.tsx";
 
 
 function useCurrentDate() {
-  return useContext(CurrentDateContext);
+  return useContext(CurrentDateContext)!;
 }
 
 export default useCurrentDate;

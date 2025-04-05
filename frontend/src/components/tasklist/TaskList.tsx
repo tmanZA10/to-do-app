@@ -6,6 +6,8 @@ import useAuth from "../../hooks/UseAuth.tsx";
 import {taskType} from "../task/Task.tsx";
 import AddNewTask from "../addnewtask/AddNewTask.tsx";
 import useMainAxios from "../../hooks/UseMainAxios.tsx";
+import useCurrentDate from "../../hooks/UseCurrentDate.tsx";
+import {setMinTime} from "../../util.tsx";
 
 type tasksContextType = {
   tasks: taskType[],
@@ -20,6 +22,7 @@ function TaskList() {
 
   const { listId } = useCurrentList()
   const { userId } = useAuth()
+  const { currentDate } = useCurrentDate()
 
   const [tasks, setTasks] = useState<taskType[]>([])
 
@@ -53,11 +56,11 @@ function TaskList() {
       <div>
         <div className={styles.header}>
           <h4>Tasks</h4>
-          <select name="sort" id="">
-            <option value="sort">Sort</option>
-            <option value="time">Time</option>
-            <option value="priority">Priority</option>
-          </select>
+          {/*<select name="sort" id="">*/}
+          {/*  <option value="sort">Sort</option>*/}
+          {/*  <option value="time">Time</option>*/}
+          {/*  <option value="priority">Priority</option>*/}
+          {/*</select>*/}
         </div>
         <>
           {
@@ -66,12 +69,14 @@ function TaskList() {
                 {
                   tasks.map(
                     ((task, i) =>
+                      task.dueDate >= setMinTime(currentDate) &&
+                      task.dueDate < currentDate ?
                         <Task
                           key={task.id}
                           task={task}
                           index={i}
                           setTasks={setTasks}
-                        />
+                        /> :null
                     )
                   )
                 }

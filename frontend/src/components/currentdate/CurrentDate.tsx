@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 
 function CurrentDate() {
   const months =["Jan", "Feb", "Mar", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" ];
-  const { currentDate } = useCurrentDate()!
+  const { currentDate } = useCurrentDate()
 
   const [timeOfDay, setTimeOfDay] = useState<"Morning" | "Afternoon" | "Evening">("Morning")
 

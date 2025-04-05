@@ -1,4 +1,5 @@
 import {createContext, ReactNode, useState} from "react";
+import {setMaxTime} from "../util.tsx";
 
 
 type propTypes = {
@@ -12,7 +13,7 @@ type contextType = {
 export const CurrentDateContext = createContext<contextType | undefined>(undefined);
 
 function CurrentDateProvider({ children }: propTypes) {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(setMaxTime(new Date()));
   return (
     <CurrentDateContext.Provider value={{currentDate, setCurrentDate}} >
       {children}

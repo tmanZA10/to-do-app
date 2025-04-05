@@ -5,12 +5,13 @@ import useCurrentDate from "../../hooks/UseCurrentDate.tsx";
 import {useNavigate} from "react-router-dom";
 import useAuth from "../../hooks/UseAuth.tsx";
 import useAuthAxios from "../../hooks/UseAuthAxios.tsx";
+import {setMaxTime} from "../../util.tsx";
 
 function RightSideBar() {
 
   const authAxios = useAuthAxios()
 
-  const { currentDate, setCurrentDate } =useCurrentDate()!;
+  const { currentDate, setCurrentDate } =useCurrentDate();
   const navigate = useNavigate();
   const { setAccessToken, setUserId } = useAuth()
 
@@ -32,7 +33,7 @@ function RightSideBar() {
         <Calendar
           value={currentDate}
           onChange={(value) =>{
-            setCurrentDate(value as Date);
+            setCurrentDate(setMaxTime(value as Date));
           }}
         />
       </div>
