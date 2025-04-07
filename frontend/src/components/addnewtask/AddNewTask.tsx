@@ -29,7 +29,7 @@ function AddNewTask() {
           <input
             type="text"
             placeholder="Add a task..."
-            className={styles.add}
+            className={styles.addInput}
             value={addTaskInput}
             onChange={handleInputChange}
           />

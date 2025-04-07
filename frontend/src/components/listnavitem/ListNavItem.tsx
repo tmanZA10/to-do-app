@@ -1,5 +1,5 @@
 import styles from './ListNavItem.module.css'
-import { Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
 import useAuth from "../../hooks/UseAuth.tsx";
@@ -15,9 +15,10 @@ type propTypes = {
 function NavItem({ listName, navItemId, setTaskList }:propTypes) {
 
   const params = useParams()
-  const {listId, setListId} = useCurrentList()
+  const {listId, setListId, setListName} = useCurrentList()
   const { userId } = useAuth()
   const mainAxios = useMainAxios()
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (params.list === listName){
@@ -50,6 +51,11 @@ function NavItem({ listName, navItemId, setTaskList }:propTypes) {
       )
     }
     setTaskList(newTaskList)
+    if (newTaskList.length > 0){
+      setListName(newTaskList[0].name)
+      setListId(newTaskList[0].id)
+      navigate(`/${newTaskList[0].name}`)
+    }
   }
 
   return (

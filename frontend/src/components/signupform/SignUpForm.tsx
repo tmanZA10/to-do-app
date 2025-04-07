@@ -129,7 +129,7 @@ function SignUpForm() {
   return (
     <Form className={styles.form} onSubmit={handleSubmit}>
       {
-        responseMessage !== "" ? <p className={responseClassAllocator()}></p> : null
+        responseMessage !== "" ? <p className={responseClassAllocator()}>{responseMessage}</p> : null
       }
       <div className={styles.inputContainer}>
         <label htmlFor="name">Name</label>
