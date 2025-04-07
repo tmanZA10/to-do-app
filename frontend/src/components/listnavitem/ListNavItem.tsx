@@ -1,4 +1,4 @@
-import styles from './NavItem.module.css'
+import styles from './ListNavItem.module.css'
 import { Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import useCurrentList from "../../hooks/UseCurrentList.tsx";
