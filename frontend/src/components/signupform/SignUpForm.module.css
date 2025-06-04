@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: .8rem;
+    width: 100%;
 }
 
 .inputContainer{
@@ -19,10 +20,8 @@
 .inputContainer input{
     font-size: 1.6rem;
     padding: .8rem 1.2rem;
-    /* border: 2px solid var(--hue-color); */
     border: none;
     border-radius: 1.2rem;
-    /* color: var(--hue-color); */
 }
 
 .submitButton{

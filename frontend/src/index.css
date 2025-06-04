@@ -19,6 +19,7 @@
   --right-sidebar-width:250px;
   --left-sidebar-width:200px;
   --headline: 36px;
+  --auth-form-min-width: 350px;
 
   /* fonts */
   --heading-font: fantasy;
@@ -29,6 +30,7 @@ body {
   font-size: 1.6rem;
   margin: 0;
   background-color: var(--primary-color);
+  min-width: 320px;
   /* display: flex; */
   /* place-items: center; */
   /* min-width: 320px;
