@@ -73,11 +73,15 @@ function LoginForm() {
     }catch (err){
       setLoading(false)
       if (axios.isAxiosError(err)) {
+        console.log("eh eh he");
+        
         if (err.status === 400 || err.status === 401) {
           setResponseMessage("Password Invalid.")
         }
-        if (err.status === 404) {
+        else if (err.status === 404) {
           setResponseMessage("Account does not exist.")
+        }else{
+        setResponseMessage("Something went wrong.")
         }
       }else{
         setResponseMessage("Something went wrong.")
